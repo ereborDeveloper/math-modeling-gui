@@ -30,17 +30,17 @@
                 </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
-        <RandomChart :data="json" class="ma-2"></RandomChart>
+        <ModelingChart :data="json" class="ma-2"></ModelingChart>
     </div>
 </template>
 
 <script>
-    import RandomChart from "@/components/Chart/RandomChart";
+    import ModelingChart from "@/components/Chart/ModelingChart";
     import axios from 'axios';
 
     export default {
         name: "Home",
-        components: {RandomChart},
+        components: {ModelingChart},
         data() {
             return {
                 panel: [0],

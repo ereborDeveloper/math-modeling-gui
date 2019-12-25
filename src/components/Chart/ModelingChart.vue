@@ -13,6 +13,7 @@
             }],
             yAxes: [{
                 ticks: {
+                ticksLength:5,
                     autoSkip: false,
                     maxRotation: -90,
                     minRotation: -90
@@ -59,7 +60,8 @@
             fillData() {
                 var json = [];
                 var lbl = [];
-                var dt = [];
+                var dt0 = [];
+                var dt1 = [];
                 for (var k in this.chartData) {
                     var ob = {q: k, W: this.chartData[k]};
                     json.push(ob)
@@ -68,17 +70,25 @@
                     return a.q - b.q;
                 });
                 for (var obj in json) {
-                    lbl.push(json[obj].q);
-                    dt.push(json[obj].W);
+                    lbl.push(Number(json[obj].q).toFixed(2));
+                    dt0.push(json[obj].W[0]);
+                    dt1.push(json[obj].W[1]);
                 }
                 this.deflection = {
                     labels: lbl,
                     datasets: [{
-                        label: 'W(q)',
+                        label: 'W(q) (a/2; b/2)',
                         borderColor: 'rgb(255, 99, 132)',
-                        data: dt,
+                        data: dt0,
                         fill: false
-                    }]
+                    },
+                        {
+                            label: 'W(q) (a/4; b/4)',
+                            borderColor: 'rgb(99, 255, 132)',
+                            data: dt1,
+                            fill: false
+                        }
+                    ]
                 };
             }
 
