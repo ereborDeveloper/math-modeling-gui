@@ -11,7 +11,7 @@
                         <v-icon></v-icon>
                     </v-list-item-action>
                     <v-list-item-content>
-                        <v-list-item-title>Оболочки</v-list-item-title>
+                        <v-list-item-title>Рассчет оболочек</v-list-item-title>
                     </v-list-item-content>
                 </v-list-item>
             </v-list>
