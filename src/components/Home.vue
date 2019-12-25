@@ -23,14 +23,12 @@
                                     ></v-text-field>
                                 </v-col>
                             </v-row>
-                            <v-btn @click="getData()">Получить данные</v-btn>
-
                         </v-col>
                     </v-row>
                 </v-expansion-panel-content>
             </v-expansion-panel>
         </v-expansion-panels>
-        <ModelingChart :data="json" class="ma-2"></ModelingChart>
+        <ModelingChart :data="json" :status="status" class="ma-2"></ModelingChart>
     </div>
 </template>
 
@@ -48,26 +46,24 @@
                 tableRows: 50,
                 json: [],
                 headers: [],
-                running: false,
+                status: "",
                 isOpened: 1
             }
         },
         computed: {
             buttonValue: function () {
-                if (this.running) {
-                    return "Остановить";
-                } else {
+
                     return "Запустить";
-                }
+                // }
             }
         },
         methods: {
             run() {
-                axios.post('http://localhost:9090/modeling/start', {n: this.n}).then()
+                axios.post('http://localhost:9090/modeling/start', {n: this.n}).then();
             },
             getStatus() {
                 axios.get('http://localhost:9090/modeling/status').then(response => {
-                    this.running = response.data;
+                    this.status = response.data;
                 })
             },
             getData() {
@@ -84,7 +80,7 @@
             }
         },
         created() {
-            this.getStatus();
+            this.getData();
         }
     }
 </script>

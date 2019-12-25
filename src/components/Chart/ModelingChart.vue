@@ -1,27 +1,39 @@
 <template>
     <div>
         <v-card>
-            <v-card-title>График</v-card-title>
+            <v-card-title>Рассчет</v-card-title>
             <v-card-text>
-                <line-chart class="small" style="transform: rotate(-90deg)" :chart-data="deflection"
+                <v-row>
+                <v-col cols="3">Статус: {{computedStatus}}</v-col>
+                <v-col cols="6">
+                <line-chart style="transform: rotate(-90deg)" :chart-data="deflection"
                             :options="{responsive: true, maintainAspectRatio: true, scales: {
             xAxes: [{
                 ticks: {
+                    maxTicksLimit:10,
                     maxRotation: -90,
-                    minRotation: -90
+                    minRotation: -90,
+                                        beginAtZero: true,
+
+                    max: 4,
+                    min: 0
                 }
             }],
             yAxes: [{
                 ticks: {
-                ticksLength:5,
                     autoSkip: false,
                     maxRotation: -90,
-                    minRotation: -90
+                    minRotation: -90,
+                    beginAtZero: true,
+                    max: 0.3,
+                    min: 0
                 }
             }],
             showTooltips: false
         }
 }"></line-chart>
+                </v-col>
+                </v-row>
             </v-card-text>
         </v-card>
     </div>
@@ -31,13 +43,12 @@
     import LineChart from './LineChart.js'
 
     export default {
-        props: ["data"],
+        props: ["data", "status"],
         components: {
             LineChart
         },
         data() {
             return {
-                status: "Получаем статус...",
                 deflection: {},
                 json: []
             }
@@ -45,6 +56,9 @@
         computed: {
             chartData: function () {
                 return this.data;
+            },
+            computedStatus: function () {
+                return this.status;
             }
         }, watch: {
             data: function () {
