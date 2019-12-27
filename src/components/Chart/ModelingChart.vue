@@ -1,35 +1,43 @@
 <template>
     <div>
         <v-card>
-            <v-card-title>Рассчет</v-card-title>
+            <v-card-title>Расчет</v-card-title>
             <v-card-text>
                 <v-row>
                 <v-col cols="3">Статус: {{computedStatus}}</v-col>
-                <v-col cols="6">
-                <line-chart style="transform: rotate(-90deg)" :chart-data="deflection"
-                            :options="{responsive: true, maintainAspectRatio: true, scales: {
+                <v-col cols="7">
+                <line-chart style="" :chart-data="deflection"
+                            :options="{responsive: true, maintainAspectRatio: true,    pointDotRadius: 1,
+  pointDotStrokeWidth: 1,
+  pointHitDetectionRadius: 2,scales: {
             xAxes: [{
                 ticks: {
                     maxTicksLimit:10,
-                    maxRotation: -90,
-                    minRotation: -90,
+
                                         beginAtZero: true,
 
                     max: 4,
                     min: 0
-                }
+                },
+                scaleLabel: {
+        display: true,
+        labelString: 'q'
+      }
+
             }],
             yAxes: [{
                 ticks: {
                     autoSkip: false,
-                    maxRotation: -90,
-                    minRotation: -90,
+
                     beginAtZero: true,
-                    max: 0.3,
-                    min: 0
-                }
-            }],
-            showTooltips: false
+
+                    min: 0,
+                },
+                                scaleLabel: {
+        display: true,
+        labelString: 'W'
+      }
+            }]
         }
 }"></line-chart>
                 </v-col>
