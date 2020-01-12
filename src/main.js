@@ -8,7 +8,8 @@ Vue.use(VueRouter);
 Vue.use(Vuetify);
 const opts = {};
 Vue.config.productionTip = true;
-
+const VBtn = Vue.component('VBtn');
+VBtn.options.props.ripple.default = false;
 import Home from "@/components/Home";
 
 const routes = [

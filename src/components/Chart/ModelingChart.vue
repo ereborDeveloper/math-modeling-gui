@@ -1,49 +1,57 @@
 <template>
     <div>
-        <v-card>
-            <v-card-title>Расчет</v-card-title>
-            <v-card-text>
-                <v-row>
-                <v-col cols="3">Статус: {{computedStatus}}</v-col>
-                <v-col cols="7">
-                <line-chart style="" :chart-data="deflection"
-                            :options="{responsive: true, maintainAspectRatio: true,    pointDotRadius: 1,
-  pointDotStrokeWidth: 1,
-  pointHitDetectionRadius: 2,scales: {
-            xAxes: [{
-                ticks: {
-                    maxTicksLimit:10,
+        <v-row class="justify-center">
+            <v-col cols="3">
+                <p>Ограничения по W</p>
+                <v-text-field outlined label="Минимальное W" v-model="minW" @input="fillData()"></v-text-field>
+                <v-text-field outlined label="Максимальное W" v-model="maxW" @input="fillData()"></v-text-field>
+            </v-col>
+            <v-col cols="4">
+                Масштаб:
+                <v-slider v-model="chartScale" min="400" max="1600"></v-slider>
+            </v-col>
+            <v-col cols="2">
+                <v-btn dark>
+                    <v-icon left>save</v-icon>
+                    Сохранить в PNG
+                </v-btn>
+            </v-col>
+            <v-col cols="3">
+            </v-col>
+        </v-row>
+        <v-row class="justify-center">
+            <v-card max-width="inherit" v-bind:width="chartScale">
+                <line-chart :chart-data="deflection"
+                            :options="{responsive: true, maintainAspectRatio: true, pointDotRadius: 1, pointDotStrokeWidth: 1, pointHitDetectionRadius: 2,
+                    scales: {
+                        xAxes: [{
+                            ticks: {
+                                maxTicksLimit:10,
+                                beginAtZero: true,
+                                max: 4,
+                                min: 0
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'q'
+                            }
+                        }],
+                        yAxes: [{
+                            ticks: {
+                                autoSkip: false,
+                                beginAtZero: true,
 
-                                        beginAtZero: true,
+                            },
+                            scaleLabel: {
+                                display: true,
+                                labelString: 'W'
+                            }
+                        }]
 
-                    max: 4,
-                    min: 0
-                },
-                scaleLabel: {
-        display: true,
-        labelString: 'q'
-      }
-
-            }],
-            yAxes: [{
-                ticks: {
-                    autoSkip: false,
-
-                    beginAtZero: true,
-
-                    min: 0,
-                },
-                                scaleLabel: {
-        display: true,
-        labelString: 'W'
-      }
-            }]
-        }
-}"></line-chart>
-                </v-col>
-                </v-row>
-            </v-card-text>
-        </v-card>
+                }}"
+                ></line-chart>
+            </v-card>
+        </v-row>
     </div>
 </template>
 
@@ -51,27 +59,30 @@
     import LineChart from './LineChart.js'
 
     export default {
-        props: ["data", "status"],
+        props: ["data"],
         components: {
             LineChart
         },
         data() {
             return {
+                minW: 0,
+                maxW: 1,
+                chartScale: 600,
                 deflection: {},
-                json: []
+                json: [],
+
             }
         },
         computed: {
             chartData: function () {
                 return this.data;
             },
-            computedStatus: function () {
-                return this.status;
+            chartComputedScale: function () {
+                return this.chartScale;
             }
-        }, watch: {
+        },
+        watch: {
             data: function () {
-                // this._chart.destroy();
-                //this.renderChart(this.data, this.options);
                 this.fillData();
             }
         },
@@ -85,7 +96,21 @@
                 var dt0 = [];
                 var dt1 = [];
                 for (var k in this.chartData) {
-                    var ob = {q: k, W: this.chartData[k]};
+                    let w0 = this.chartData[k][0];
+                    let w1 = this.chartData[k][1];
+                    if (w0 > this.maxW) {
+                        w0 = this.maxW;
+                    }
+                    if (w0 < this.minW) {
+                        w0 = this.minW;
+                    }
+                    if (w1 > this.maxW) {
+                        w1 = this.maxW;
+                    }
+                    if (w1 < this.minW) {
+                        w1 = this.minW;
+                    }
+                    var ob = {q: k, W: [w0, w1]};
                     json.push(ob)
                 }
                 json.sort(function (a, b) {
@@ -113,12 +138,9 @@
                     ]
                 };
             }
-
         }
-
     }
 </script>
-
 <style>
     .small {
         max-width: 600px;
