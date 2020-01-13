@@ -21,7 +21,7 @@
         </v-row>
         <v-row class="justify-center">
             <v-card max-width="inherit" v-bind:width="chartScale">
-                <line-chart id="chart" :chart-data="deflection"
+                <line-chart ref="chart" :chart-data="deflection"
                             :options="{responsive: true, maintainAspectRatio: true, pointDotRadius: 1, pointDotStrokeWidth: 1, pointHitDetectionRadius: 2,
                     scales: {
                         xAxes: [{
@@ -57,7 +57,7 @@
 
 <script>
     import LineChart from './LineChart.js'
-
+    import {saveAs} from 'file-saver'
     export default {
         props: ["data"],
         components: {
@@ -139,8 +139,9 @@
                 };
             },
             savePNG(){
-
-
+                this.$refs.chart.$refs.canvas.toBlob(function(blob) {
+                    saveAs(blob, "chart.png");
+                });
             }
         }
     }
