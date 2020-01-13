@@ -11,7 +11,7 @@
                 <v-slider v-model="chartScale" min="400" max="1600"></v-slider>
             </v-col>
             <v-col cols="2">
-                <v-btn dark>
+                <v-btn dark @click="savePNG()">
                     <v-icon left>save</v-icon>
                     Сохранить в PNG
                 </v-btn>
@@ -21,7 +21,7 @@
         </v-row>
         <v-row class="justify-center">
             <v-card max-width="inherit" v-bind:width="chartScale">
-                <line-chart :chart-data="deflection"
+                <line-chart id="chart" :chart-data="deflection"
                             :options="{responsive: true, maintainAspectRatio: true, pointDotRadius: 1, pointDotStrokeWidth: 1, pointHitDetectionRadius: 2,
                     scales: {
                         xAxes: [{
@@ -137,6 +137,10 @@
                         }
                     ]
                 };
+            },
+            savePNG(){
+
+
             }
         }
     }

@@ -35,6 +35,10 @@
                                         Сброс ошибки<span v-if="errorCalc">: {{this.status}}</span>
                                     </v-btn>
                                 </v-row>
+                                <v-row>
+                                    <v-btn tile block v-bind:height=manageButtonHeight x-small
+                                           disabled>Расширенные настройки кэширования и многопоточного расчета</v-btn>
+                                </v-row>
                             </v-container>
                         </v-card>
                     </v-col>
@@ -176,6 +180,14 @@
             </v-tab-item>
             <v-tab-item>
                 <v-card class="pa-10">
+                    <v-radio-group v-model="method">
+
+                        <v-radio label="Метод Ньютона"
+                                 :value="1"></v-radio>
+                        <v-radio label="Метод BFGS"
+                                 :value="0" disabled></v-radio>
+                    </v-radio-group>
+
                     <v-row>
                         <v-col cols="2">
                             <v-text-field outlined
@@ -193,6 +205,7 @@
                             ></v-text-field>
                         </v-col>
                     </v-row>
+
                 </v-card>
             </v-tab-item>
         </v-tabs>
@@ -219,6 +232,7 @@
         components: {ModelingChart},
         data() {
             return {
+                method: 1,
                 errorCalc: false,
                 errorNetwork: false,
                 serverName: "localhost",
@@ -230,7 +244,7 @@
                 showButtonWidth: 273,
                 dataTypes: ["JSON", "XLS", "TXT"],
                 showElementLabel: ["Параметры расчета", "График", "Выгрузить данные", "Лог"],
-                showElementIcon: ["settings_applications", "show_chart", "save_alt", ""],
+                showElementIcon: ["settings_applications", "show_chart", "save_alt", "list"],
                 showElementIndex: 1,
                 mu12: 0.3,
                 mu21: 0.3,
@@ -373,7 +387,7 @@
                 }, 200);
             },
             errorReset() {
-                axios.post("http://" + this.serverName + ":" + this.port + "/modeling/status-reset").then(()=>{
+                axios.post("http://" + this.serverName + ":" + this.port + "/modeling/status-reset").then(() => {
                         this.errorCalc = false;
                         this.snackbar = false;
                         this.getStatus();
