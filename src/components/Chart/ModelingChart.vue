@@ -1,22 +1,31 @@
 <template>
     <div>
         <v-row class="justify-center">
-            <v-col cols="3">
+            <v-col cols="1">
+
+            </v-col>
+            <v-col cols="2">
                 <p>Ограничения по W</p>
                 <v-text-field outlined label="Минимальное W" v-model="minW" @input="fillData()"></v-text-field>
                 <v-text-field outlined label="Максимальное W" v-model="maxW" @input="fillData()"></v-text-field>
             </v-col>
-            <v-col cols="4">
-                Масштаб:
-                <v-slider v-model="chartScale" min="400" max="1600"></v-slider>
-            </v-col>
             <v-col cols="2">
-                <v-btn dark @click="savePNG()">
+                <p>Ограничения по Q</p>
+                <v-text-field outlined label="Минимальное Q" v-model="minQ" @input="fillData()"></v-text-field>
+                <v-text-field outlined label="Максимальное Q" v-model="maxQ" @input="fillData()"></v-text-field>
+            </v-col>
+            <v-col cols="6">
+                <p>Масштаб</p>
+                <v-slider class="pt-3" v-model="chartScale" min="400" max="1600"></v-slider>
+                <p></p>
+
+                <v-btn dark @click="savePNG()" class="mt-1" height="55">
                     <v-icon left>save</v-icon>
                     Сохранить в PNG
                 </v-btn>
             </v-col>
-            <v-col cols="3">
+            <v-col cols="1">
+
             </v-col>
         </v-row>
         <v-row class="justify-center">
@@ -67,6 +76,8 @@
             return {
                 minW: 0,
                 maxW: 1,
+                minQ: 0,
+                maxQ: 3.4,
                 chartScale: 600,
                 deflection: {},
                 json: [],
@@ -117,9 +128,12 @@
                     return a.q - b.q;
                 });
                 for (var obj in json) {
-                    lbl.push(Number(json[obj].q).toFixed(2));
-                    dt0.push(json[obj].W[0]);
-                    dt1.push(json[obj].W[1]);
+                    const q = Number(json[obj].q);
+                    if(q >= this.minQ && q <= this.maxQ) {
+                        lbl.push(q.toFixed(2));
+                        dt0.push(json[obj].W[0]);
+                        dt1.push(json[obj].W[1]);
+                    }
                 }
                 this.deflection = {
                     labels: lbl,
