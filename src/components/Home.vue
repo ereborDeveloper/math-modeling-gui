@@ -37,7 +37,7 @@
                                 </v-row>
                                 <v-row>
                                     <v-btn tile block v-bind:height=manageButtonHeight x-small
-                                           disabled>Расширенные настройки кэширования и многопоточного расчета</v-btn>
+                                           disabled>Расширенные настройки кэширования<br> и многопоточного расчета</v-btn>
                                 </v-row>
                             </v-container>
                         </v-card>
@@ -49,7 +49,6 @@
             <v-row>
                 <v-btn v-for="i in showElementLabel.length" :key="i"
                        v-bind:height=showButtonHeight
-                       v-bind:width=showButtonWidth
                        block tile
                        @click="showElementIndex = i"
                        :class="showElementIndex === i? 'chosen-btn' : 'grey--text'"
@@ -68,12 +67,14 @@
             <v-card-title>В каком формате вы хотите выгрузить данные?</v-card-title>
             <v-card-text>
                 <v-row>
+                    <v-col cols="3"></v-col>
                     <v-col cols="3">
                         <v-combobox label="Форматы" outlined multiple :items="dataTypes"></v-combobox>
                     </v-col>
-                    <v-col cols="1">
+                    <v-col cols="3">
                         <v-btn height="57" dark>Выгрузить</v-btn>
                     </v-col>
+                    <v-col cols="3"></v-col>
                 </v-row>
             </v-card-text>
         </v-card>
@@ -126,7 +127,7 @@
                             <v-text-field outlined label="kx" v-model="kx[shellIndex-1]" disabled></v-text-field>
                             <v-text-field outlined label="ky" v-model="ky[shellIndex-1]" disabled></v-text-field>
                         </v-col>
-                        <v-col cols="2">
+                        <v-col cols="3">
                             <p>Значение переменных</p>
                             <v-text-field outlined label="R1" v-model="R1"
                                           v-if="kx[shellIndex-1] === '1 / R1' "></v-text-field>
@@ -241,7 +242,6 @@
                 snackbar: false,
                 manageButtonHeight: 57,
                 showButtonHeight: 45,
-                showButtonWidth: 273,
                 dataTypes: ["JSON", "XLS", "TXT"],
                 showElementLabel: ["Параметры расчета", "График", "Выгрузить данные", "Лог"],
                 showElementIcon: ["settings_applications", "show_chart", "save_alt", "list"],
