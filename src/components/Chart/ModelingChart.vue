@@ -1,37 +1,40 @@
 <template>
     <div>
         <v-row class="justify-center">
-            <v-col cols="1">
-
-            </v-col>
             <v-col cols="2">
-                <p>Ограничения по W</p>
-                <v-text-field outlined label="Минимальное W" v-model="minW" @input="fillData()"></v-text-field>
-                <v-text-field outlined label="Максимальное W" v-model="maxW" @input="fillData()"></v-text-field>
+                <p class="text-left">Отрисовка по W</p>
+                <v-row>
+                    <v-col cols="6">
+                        <v-text-field outlined label="Минимальное W" v-model="minW" @input="fillData()"></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined label="Максимальное W" v-model="maxW" @input="fillData()"></v-text-field>
+                    </v-col>
+                </v-row>
+                <p class="text-left">Отрисовка по Q</p>
+                <v-row>
+                    <v-col cols="6">
+                        <v-text-field outlined label="Минимальное Q" v-model="minQ" @input="fillData()"></v-text-field>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field outlined label="Максимальное Q" v-model="maxQ" @input="fillData()"></v-text-field>
+                    </v-col>
+                </v-row>
+                <v-row>
+                    <v-col cols="12">
+                        <p class="text-left">Масштаб</p>
+                        <v-slider class="pt-3" v-model="chartScale" min="400" max="1230"></v-slider>
+                        <v-btn dark @click="savePNG()" height="55">
+                            <v-icon left>save</v-icon>
+                            Сохранить в PNG
+                        </v-btn>
+                    </v-col>
+                </v-row>
             </v-col>
-            <v-col cols="2">
-                <p>Ограничения по Q</p>
-                <v-text-field outlined label="Минимальное Q" v-model="minQ" @input="fillData()"></v-text-field>
-                <v-text-field outlined label="Максимальное Q" v-model="maxQ" @input="fillData()"></v-text-field>
-            </v-col>
-            <v-col cols="6">
-                <p>Масштаб</p>
-                <v-slider class="pt-3" v-model="chartScale" min="400" max="1600"></v-slider>
-                <p></p>
-
-                <v-btn dark @click="savePNG()" class="mt-1" height="55">
-                    <v-icon left>save</v-icon>
-                    Сохранить в PNG
-                </v-btn>
-            </v-col>
-            <v-col cols="1">
-
-            </v-col>
-        </v-row>
-        <v-row class="justify-center">
-            <v-card max-width="inherit" v-bind:width="chartScale">
-                <line-chart ref="chart" :chart-data="deflection"
-                            :options="{responsive: true, maintainAspectRatio: true, pointDotRadius: 1, pointDotStrokeWidth: 1, pointHitDetectionRadius: 2,
+            <v-col cols="9">
+                <v-card  v-bind:width="chartScale">
+                    <line-chart ref="chart" :chart-data="deflection"
+                                :options="{responsive: true, maintainAspectRatio: true, pointDotRadius: 1, pointDotStrokeWidth: 1, pointHitDetectionRadius: 1,
                     scales: {
                         xAxes: [{
                             ticks: {
@@ -58,8 +61,9 @@
                         }]
 
                 }}"
-                ></line-chart>
-            </v-card>
+                    ></line-chart>
+                </v-card>
+            </v-col>
         </v-row>
     </div>
 </template>
@@ -67,6 +71,7 @@
 <script>
     import LineChart from './LineChart.js'
     import {saveAs} from 'file-saver'
+
     export default {
         props: ["data"],
         components: {
@@ -78,7 +83,7 @@
                 maxW: 1,
                 minQ: 0,
                 maxQ: 3.4,
-                chartScale: 600,
+                chartScale: 900,
                 deflection: {},
                 json: [],
 
@@ -129,7 +134,7 @@
                 });
                 for (var obj in json) {
                     const q = Number(json[obj].q);
-                    if(q >= this.minQ && q <= this.maxQ) {
+                    if (q >= this.minQ && q <= this.maxQ) {
                         lbl.push(q.toFixed(2));
                         dt0.push(json[obj].W[0]);
                         dt1.push(json[obj].W[1]);
@@ -152,8 +157,8 @@
                     ]
                 };
             },
-            savePNG(){
-                this.$refs.chart.$refs.canvas.toBlob(function(blob) {
+            savePNG() {
+                this.$refs.chart.$refs.canvas.toBlob(function (blob) {
                     saveAs(blob, "chart.png");
                 });
             }

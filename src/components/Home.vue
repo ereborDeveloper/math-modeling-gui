@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div id="modeling">
         <v-card>
             <v-parallax
                     style="border-radius: 5px 5px 0 0"
@@ -8,7 +8,8 @@
             >
                 <v-row>
                     <v-col cols="8">
-                        <v-card class="ma-2 pa-2 dark-transparent" dark>
+                        <v-card class="ma-2 pa-2 dark-transparent"
+                                dark>
                             <v-card-title>Моделирование деформирования оболочечных конструкций</v-card-title>
                             <v-divider></v-divider>
                             <v-card-text class="text-left">Выполняется расчет напряженно-деформированного состояния
@@ -19,25 +20,43 @@
                         </v-card>
                     </v-col>
                     <v-col cols="4">
-                        <v-card class="ma-2 pa-2 dark-transparent" dark>
+                        <v-card class="ma-2 pa-2 dark-transparent"
+                                dark>
                             <v-container fluid>
                                 <v-row>
-                                    <v-btn tile block v-bind:height=manageButtonHeight x-small @click="run()"
-                                           :disabled="errorNetwork || errorCalc || running">
+                                    <v-btn tile
+                                           block
+                                           v-bind:height=manageButtonHeight
+                                           x-small
+                                           @click="run()"
+                                           :disabled="errorNetwork || errorCalc || running"
+                                           class="modeling-dark"
+                                    >
                                         {{runButtonValue}}
                                         <v-progress-circular v-if="running" class="ml-5"
                                                              indeterminate
                                                              color="primary"
                                         ></v-progress-circular>
                                     </v-btn>
-                                    <v-btn tile :disabled="!errorCalc" block v-bind:height=manageButtonHeight x-small
-                                           @click="errorReset()">
+                                    <v-btn tile
+                                           :disabled="!errorCalc"
+                                           block
+                                           v-bind:height=manageButtonHeight
+                                           x-small
+                                           @click="errorReset()"
+                                           class="modeling-dark"
+                                    >
                                         Сброс ошибки<span v-if="errorCalc">: {{this.status}}</span>
                                     </v-btn>
                                 </v-row>
                                 <v-row>
-                                    <v-btn tile block v-bind:height=manageButtonHeight x-small
-                                           disabled>Расширенные настройки кэширования<br> и многопоточного расчета</v-btn>
+                                    <v-btn tile
+                                           block
+                                           v-bind:height=manageButtonHeight
+                                           x-small
+                                           class="modeling-dark"
+                                           disabled>Расширенные настройки кэширования<br> и многопоточного расчета
+                                    </v-btn>
                                 </v-row>
                             </v-container>
                         </v-card>
@@ -51,7 +70,7 @@
                        v-bind:height=showButtonHeight
                        block tile
                        @click="showElementIndex = i"
-                       :class="showElementIndex === i? 'chosen-btn' : 'grey--text'"
+                       :class="showElementIndex === i? 'chosen-btn' : 'modeling-dark'"
                 >
                     <v-icon left>{{showElementIcon[i-1]}}
                     </v-icon>
@@ -61,7 +80,7 @@
         </v-container>
 
         <v-card v-if="showElementIndex === 2">
-            <ModelingChart :data="json" :status="status" class="ma-2 pb-10"></ModelingChart>
+            <ModelingChart :data="json" :status="status" class="ma-0 pb-10"></ModelingChart>
         </v-card>
         <v-card v-if="showElementIndex === 3">
             <v-card-title>В каком формате вы хотите выгрузить данные?</v-card-title>
@@ -72,27 +91,21 @@
                         <v-combobox label="Форматы" outlined multiple :items="dataTypes"></v-combobox>
                     </v-col>
                     <v-col cols="3">
-                        <v-btn height="57" dark>Выгрузить</v-btn>
+                        <v-btn class="modeling-dark" height="57" dark>Выгрузить</v-btn>
                     </v-col>
                     <v-col cols="3"></v-col>
                 </v-row>
             </v-card-text>
         </v-card>
-        <v-card tile v-if="showElementIndex === 4">
-            <v-timeline
-                    align-top
-                    dense
-            >
-                <v-timeline-item v-for="i in modelingSteps.length" :key="i"
-                                 :color="modelingSteps[i-1] ? 'green' : 'grey'"
-                                 small
-                                 left
-                >
-                    {{modelingStepsDescription[i-1]}}
-                </v-timeline-item>
-            </v-timeline>
+        <v-card tile
+                v-if="showElementIndex === 4"
+        >
+            <Log :running="running"></Log>
         </v-card>
-        <v-tabs tile v-if="showElementIndex === 1">
+        <v-tabs tile
+                v-if="showElementIndex === 1"
+                class="elevation-1"
+        >
             <v-tab>Геометрические параметры
             </v-tab>
             <v-tab>Физические параметры
@@ -182,13 +195,11 @@
             <v-tab-item>
                 <v-card class="pa-10">
                     <v-radio-group v-model="method">
-
                         <v-radio label="Метод Ньютона"
                                  :value="1"></v-radio>
                         <v-radio label="Метод BFGS"
                                  :value="0" disabled></v-radio>
                     </v-radio-group>
-
                     <v-row>
                         <v-col cols="2">
                             <v-text-field outlined
@@ -206,7 +217,6 @@
                             ></v-text-field>
                         </v-col>
                     </v-row>
-
                 </v-card>
             </v-tab-item>
         </v-tabs>
@@ -225,12 +235,13 @@
 </template>
 
 <script>
+    import Log from "@/components/Log";
     import ModelingChart from "@/components/Chart/ModelingChart";
-    import axios from 'axios';
+    import {HTTP} from '@/components/http-common.js';
 
     export default {
         name: "Home",
-        components: {ModelingChart},
+        components: {Log, ModelingChart},
         data() {
             return {
                 method: 1,
@@ -271,8 +282,6 @@
                 headers: [],
                 status: "",
                 isOpened: 1,
-                modelingSteps: [false, false, false, false, false, false, false, false, false, false, false],
-                modelingStepsDescription: ["Запуск", "Раскрытие скобок под интегралом", "Подстановка аппроксимирующих функций", "Взятие производных (оптимизация)", "Раскрытие посчитанных производных и аппроксимирующих функций (оптимизация)", "Подготовка к интегрированию (оптимизация)", "Взятие двойного интеграла", "Подготовка к взятию производных (оптимизация)", "Рассчет градиента", "Рассчет матрицы Гесса", "Выполнение метода Ньютона и отрисовки"],
                 shells: ["Пологая двоякой кривизны", "Цилиндрическая", "Коническая", "Сферическая", "Торообразная"],
                 shellsUrl: ["https://sun9-5.userapi.com/v9GY2NgyB_HztGnlijwk81Jt-wA-olR-t1tgjA/avOT8WgThfs.jpg", "https://sun9-23.userapi.com/luNu0X-j8ewMac3PeE_uQQcCUHXBGCVxu6MZLQ/R7_bGL9trFk.jpg", "https://sun9-51.userapi.com/g3DIuKPekpotrgkqf-bWUtXxBFPATQpMUF0lOg/ivXfJOXz5No.jpg", "https://sun9-16.userapi.com/P1fuz_WSIQThKpjhsikZCaYIbcRNMfKr24PMHQ/Qc4zZV-_5vM.jpg", "https://sun9-46.userapi.com/nGIQwlOFIkAJm9T2xxTgh6O0poobfEtud2CQgw/g0lQnIUL9l0.jpg"],
                 shellsRussianCaseWhich: ["пологой", "цилиндрической", "конической", "сферической", "торообразной"],
@@ -321,10 +330,9 @@
         methods: {
             run() {
                 this.status = "Запуск";
-                this.getStatus();
                 this.getData();
 
-                axios.post("http://" + this.serverName + ":" + this.port + "/modeling/start", {
+                HTTP.post("start", {
                     n: this.n,
                     qstep: this.qStep,
                     qmax: this.qMax,
@@ -355,8 +363,8 @@
                     this.status = error;
                 });
             },
-            getBStatus() {
-                axios.get("http://" + this.serverName + ":" + this.port + "/modeling/bstatus").then(response => {
+            getRunningStatus() {
+                HTTP.get("running-status").then(response => {
                     this.running = response.data;
                     if (!this.running) {
                         clearInterval(this.interval);
@@ -365,32 +373,23 @@
                     this.status = error;
                 });
             },
-            getStatus() {
-                axios.get("http://" + this.serverName + ":" + this.port + "/modeling/status").then(response => {
-                    this.status = response.data;
-                }).catch(error => {
-                    this.status = error;
-                });
-            },
             getData() {
                 var _self = this;
                 this.interval = setInterval(function () {
-                    axios.get("http://" + _self.serverName + ":" + _self.port + "/modeling/output")
+                    HTTP.get("output")
                         .then(response => {
                             _self.json = response.data;
                         }).catch(error => {
                         _self.status = error;
                     });
-                    _self.getStatus();
-                    _self.getBStatus();
+                    _self.getRunningStatus();
 
                 }, 200);
             },
             errorReset() {
-                axios.post("http://" + this.serverName + ":" + this.port + "/modeling/status-reset").then(() => {
+                HTTP.post("status-reset").then(() => {
                         this.errorCalc = false;
                         this.snackbar = false;
-                        this.getStatus();
                     }
                 ).catch(error => {
                     this.status = error;
@@ -417,20 +416,22 @@
         min-width: 0 !important;
     }
 
-    .v-btn, .v-btn:before, .v-btn:focus:before, .v-btn:focus, .v-btn:hover:before {
+    .modeling-dark, .modeling-dark:before, .modeling-dark:focus:before, .modeling-dark:focus, .modeling-dark:hover:before {
+        color: #fff !important;
         background: #363636 !important;
     }
 
     .chosen-btn {
-        color: #66c1ff !important;
+        background: #fff !important;
+        color: #363636 !important;
         text-shadow: 0 0 1px #66c1ff;
         transition-duration: 0.6s;
     }
 
-    .v-btn:hover {
-        color: #d0e4ff !important;
+    .modeling-dark:hover {
+        color: #66c1ff !important;
         text-shadow: 0 0 5px #7c8498;
-        transition-duration: 0.2s;
+        transition: 0.6s ease-in;
     }
 
 </style>
