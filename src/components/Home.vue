@@ -100,7 +100,9 @@
                                             </p>
                                         </v-col>
                                         <v-col cols="2">
-                                            <v-checkbox class=" pa-0 ma-0">
+                                            <v-checkbox v-model="isDerivativeCached"
+                                                        class="pa-0 ma-0"
+                                            >
                                             </v-checkbox>
                                         </v-col>
                                     </v-row>
@@ -110,7 +112,8 @@
                                             </p>
                                         </v-col>
                                         <v-col cols="2">
-                                            <v-checkbox class=" pa-0 ma-0">
+                                            <v-checkbox v-model="isIntegrateCached"
+                                                        class="pa-0 ma-0">
                                             </v-checkbox>
                                         </v-col>
                                     </v-row>
@@ -328,6 +331,9 @@
         components: {Log, ModelingChart},
         data() {
             return {
+                requestBody: {},
+                isDerivativeCached: true,
+                isIntegrateCached: true,
                 availableCores: 1,
                 extraSettings: false,
                 isMenuHided: false,
@@ -453,16 +459,20 @@
             loadExtraSettings() {
                 HTTP.get("settings").then(response => {
                     this.availableCores = response.data.availableCores;
+                    this.isDerivativeCached = response.data.derivativeCached;
+                    this.isIntegrateCached = response.data.integrateCached;
                 }).catch(error => {
                     this.status = error;
                 });
             },
             saveExtraSettings() {
-                HTTP.post("settings", {
+                const requestBody = {
                     availableCores: this.availableCores,
-                    isDerivativeCached: false,
-                    isIntegrateCached: false
-                }).then(() => {
+                    derivativeCached: Boolean(this.isDerivativeCached),
+                    integrateCached: Boolean(this.isIntegrateCached)
+                };
+                this.requestBody = requestBody;
+                HTTP.post("settings", requestBody).then(() => {
                     this.extraSettings = false;
                 }).catch(error => {
                     this.status = error;
