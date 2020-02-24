@@ -100,9 +100,7 @@
                                             </p>
                                         </v-col>
                                         <v-col cols="2">
-                                            <v-checkbox v-model="isDerivativeCached"
-                                                        class="pa-0 ma-0"
-                                            >
+                                            <v-checkbox class=" pa-0 ma-0">
                                             </v-checkbox>
                                         </v-col>
                                     </v-row>
@@ -112,8 +110,7 @@
                                             </p>
                                         </v-col>
                                         <v-col cols="2">
-                                            <v-checkbox v-model="isIntegrateCached"
-                                                        class="pa-0 ma-0">
+                                            <v-checkbox class=" pa-0 ma-0">
                                             </v-checkbox>
                                         </v-col>
                                     </v-row>
@@ -331,7 +328,6 @@
         components: {Log, ModelingChart},
         data() {
             return {
-                requestBody: {},
                 isDerivativeCached: true,
                 isIntegrateCached: true,
                 availableCores: 1,
@@ -340,8 +336,6 @@
                 method: 1,
                 errorCalc: false,
                 errorNetwork: false,
-                serverName: "localhost",
-                port: 9090,
                 infoMessage: "",
                 snackbar: false,
                 manageButtonHeight: 64,
@@ -460,19 +454,16 @@
                 HTTP.get("settings").then(response => {
                     this.availableCores = response.data.availableCores;
                     this.isDerivativeCached = response.data.derivativeCached;
-                    this.isIntegrateCached = response.data.integrateCached;
                 }).catch(error => {
                     this.status = error;
                 });
             },
             saveExtraSettings() {
-                const requestBody = {
+                HTTP.post("settings", {
                     availableCores: this.availableCores,
-                    derivativeCached: Boolean(this.isDerivativeCached),
-                    integrateCached: Boolean(this.isIntegrateCached)
-                };
-                this.requestBody = requestBody;
-                HTTP.post("settings", requestBody).then(() => {
+                    isDerivativeCached: this.isDerivativeCached,
+                    isIntegrateCached: this.isIntegrateCached
+                }).then(() => {
                     this.extraSettings = false;
                 }).catch(error => {
                     this.status = error;
