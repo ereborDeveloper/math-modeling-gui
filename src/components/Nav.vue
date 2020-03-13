@@ -30,7 +30,7 @@
 <script>
     export default {
         data() {
-            return {drawer: null}
+            return {drawer: false}
         },
         name: "Nav"
     }

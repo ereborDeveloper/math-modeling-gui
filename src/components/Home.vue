@@ -302,6 +302,11 @@
                                           label="Шаг по q" v-model="qStep"
                             ></v-text-field>
                         </v-col>
+                        <v-col cols="2">
+                            <v-text-field outlined
+                                          label="Количество повторений Ньютона" v-model="stepCount"
+                            ></v-text-field>
+                        </v-col>
                     </v-row>
                 </v-card>
             </v-tab-item>
@@ -358,6 +363,7 @@
                 b1: 5.4,
                 qMax: 3.5,
                 qStep: 0.01,
+                stepCount: 1,
                 d: 0,
                 theta: 0,
                 r: 0.05,
@@ -425,6 +431,7 @@
                     n: this.n,
                     qstep: this.qStep,
                     qmax: this.qMax,
+                    stepcount: this.stepCount,
                     shellindex: this.shellIndex,
                     d: parseFloat(this.d),
                     theta: parseFloat(this.theta),
@@ -493,7 +500,7 @@
                     });
                     _self.getRunningStatus();
 
-                }, 2000);
+                }, 500);
             },
             errorReset() {
                 HTTP.post("status-reset").then(() => {
