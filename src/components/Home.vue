@@ -361,10 +361,11 @@
                 a1: 5.4,
                 b0: 0,
                 b1: 5.4,
-                qMax: 3.5,
+                qMax: 3.3,
                 qStep: 0.01,
                 stepCount: 1,
                 d: 0,
+                G: 33000,
                 theta: 0,
                 r: 0.05,
                 R1: 20.5,
@@ -399,9 +400,9 @@
             /**
              * @return {number}
              */
-            G: function () {
+/*            G: function () {
                 return this.E1 / 2 / (1 + this.mu12);
-            }
+            }*/
         },
         watch: {
             status: function () {

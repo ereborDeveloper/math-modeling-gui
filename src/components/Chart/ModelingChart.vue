@@ -80,9 +80,9 @@
         data() {
             return {
                 minW: 0,
-                maxW: 1,
+                maxW: 0.3,
                 minQ: 0,
-                maxQ: 3.4,
+                maxQ: 3.3,
                 chartScale: 900,
                 deflection: {},
                 json: [],
