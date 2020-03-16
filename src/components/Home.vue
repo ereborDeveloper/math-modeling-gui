@@ -96,17 +96,6 @@
                                     </v-row>
                                     <v-row>
                                         <v-col cols="10">
-                                            <p class="text-left">Использовать кэширование при дифференцировании
-                                            </p>
-                                        </v-col>
-                                        <v-col cols="2">
-                                            <v-checkbox v-model="isDerivativeCached"
-                                                        class="pa-0 ma-0">
-                                            </v-checkbox>
-                                        </v-col>
-                                    </v-row>
-                                    <v-row>
-                                        <v-col cols="10">
                                             <p class="text-left">Использовать кэширование при интегрировании
                                             </p>
                                         </v-col>
@@ -335,7 +324,6 @@
         components: {Log, ModelingChart},
         data() {
             return {
-                isDerivativeCached: true,
                 isIntegrateCached: true,
                 availableCores: 1,
                 extraSettings: false,
@@ -463,7 +451,6 @@
             loadExtraSettings() {
                 HTTP.get("settings").then(response => {
                     this.availableCores = response.data.availableCores;
-                    this.isDerivativeCached = response.data.derivativeCached;
                     this.isIntegrateCached = response.data.integrateCached;
                 }).catch(error => {
                     this.status = error;
@@ -472,7 +459,6 @@
             saveExtraSettings() {
                 HTTP.post("settings", {
                     availableCores: this.availableCores,
-                    derivativeCached: this.isDerivativeCached,
                     integrateCached: this.isIntegrateCached
                 }).then(() => {
                     this.extraSettings = false;
