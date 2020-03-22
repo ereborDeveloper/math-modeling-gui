@@ -1,21 +1,25 @@
 <template>
-    <div id="modeling">
-        <v-card
-                :height="isMenuHided?85:224"
-                style="transition: height .4s"
+    <div>
+        <v-parallax
+                height="460"
+                :src="parallax"
+                class="pa-0 ma-0"
         >
-            <v-parallax
-                    style="border-radius: 5px 5px 0 0"
-                    :height="300"
-                    src="https://www.ice.org.uk/ICEDevelopmentWebPortal/media/what-is-civil-engineering/projects/weald-and-downland-gridshell.jpg?ext=.jpg"
-            >
-                <v-row>
-                    <v-col cols="8">
-                        <v-card class="dark-transparent"
-                                dark
-                                :height="isMenuHided?manageButtonHeight:200"
-                                style="transition: height .4s"
-                        >
+            <v-container class="pa-10">
+                <v-card
+                        :height="isMenuHided?manageButtonHeight:400"
+                        style="transition: height .4s"
+                        class="pa-0 ma-0"
+                >
+                    <v-window
+                            cycle
+                            height="100%"
+                            v-model="slide"
+                            class="pa-0 ma-0"
+
+                    >
+                        <v-window-item>
+
                             <v-card-title>Моделирование деформирования оболочечных конструкций</v-card-title>
                             <v-card-text
                                     class="text-left py-2"
@@ -23,294 +27,240 @@
                                 <v-fade-transition>
                                     <p v-if="!isMenuHided"
                                     >
-
                                         Выполняется расчет напряженно-деформированного состояния
                                         <span style="text-decoration: underline; cursor: pointer"
-                                              @click="showParameters = true">{{shellsRussianCaseWhich[shellIndex - 1]}}</span>
+                                              @click="showParameters = true">{{shellsRussianCaseWhich[shellIndex]}}</span>
                                         оболочки
                                     </p>
                                 </v-fade-transition>
-
-                            </v-card-text>
-                        </v-card>
-                    </v-col>
-                    <v-col cols="4">
-                        <v-btn tile
-                               v-bind:height=manageButtonHeight
-                               v-bind:width=140
-                               x-small
-                               @click="run()"
-                               :class="errorNetwork || errorCalc || running ? 'modeling-dark-disabled pa-5' : 'modeling-dark pa-5'"
-                               style="border-radius: 5px 0 0 5px"
-                        >
-                            {{runButtonValue}}
-                            <v-progress-circular v-if="running"
-                                                 indeterminate
-                                                 size="25"
-                                                 color="primary"
-                                                 class="pa-0 ml-2"
-                            ></v-progress-circular>
-                        </v-btn>
-                        <v-btn tile
-                               :disabled="!errorCalc"
-                               v-bind:height=manageButtonHeight
-                               v-bind:width=140
-                               x-small
-                               @click="errorReset()"
-                               class="modeling-dark pa-5"
-                        >
-                            Сброс ошибки<span v-if="errorCalc">: {{this.status}}</span>
-                        </v-btn>
-                        <v-dialog
-                                v-model="extraSettings"
-                                width="320"
-                        >
-                            <template v-slot:activator="{ on }">
                                 <v-btn tile
                                        v-bind:height=manageButtonHeight
-                                       v-bind:width=180
+                                       v-bind:width=140
                                        x-small
-                                       class="modeling-dark pa-5"
-                                       v-on="on"
-                                       @click="loadExtraSettings()"
-                                >Расширенные настройки
+                                       @click="run()"
+                                       :class="errorNetwork || errorCalc || running ? 'modeling-dark-disabled pa-5' : 'modeling-dark pa-5'"
+                                       style="border-radius: 5px 0 0 5px"
+                                >
+                                    {{runButtonValue}}
+                                    <v-progress-circular v-if="running"
+                                                         indeterminate
+                                                         size="25"
+                                                         color="primary"
+                                                         class="pa-0 ml-2"
+                                    ></v-progress-circular>
                                 </v-btn>
-                            </template>
-                            <v-card>
-                                <v-card-title>
-                                    Расширенные настройки
-                                </v-card-title>
-                                <v-card-text>
-                                    <v-row>
-                                        <v-col cols="10">
-                                            <p class="text-left">Используемые ядра процессора
-                                            </p>
-                                        </v-col>
-                                        <v-col cols="2">
-                                            <v-text-field
-                                                    class="centered-input pa-0 ma-0"
-                                                    v-model="availableCores"
+                                <v-btn tile
+                                       :disabled="!errorCalc"
+                                       v-bind:height=manageButtonHeight
+                                       v-bind:width=140
+                                       x-small
+                                       @click="errorReset()"
+                                       class="modeling-dark pa-5"
+                                >
+                                    Сброс ошибки<span v-if="errorCalc">: {{this.status}}</span>
+                                </v-btn>
+                                <v-dialog
+                                        v-model="extraSettings"
+                                        width="320"
+                                >
+                                    <template v-slot:activator="{ on }">
+                                        <v-btn tile
+                                               v-bind:height=manageButtonHeight
+                                               v-bind:width=180
+                                               x-small
+                                               class="modeling-dark pa-5"
+                                               v-on="on"
+                                               @click="loadExtraSettings()"
+                                        >Расширенные настройки
+                                        </v-btn>
+                                    </template>
+                                    <v-card>
+                                        <v-card-title>
+                                            Расширенные настройки
+                                        </v-card-title>
+                                        <v-card-text>
+                                            <v-row>
+                                                <v-col cols="10">
+                                                    <p class="text-left">Используемые ядра процессора
+                                                    </p>
+                                                </v-col>
+                                                <v-col cols="2">
+                                                    <v-text-field
+                                                            class="centered-input pa-0 ma-0"
+                                                            v-model="availableCores"
+                                                    >
+                                                    </v-text-field>
+                                                </v-col>
+                                            </v-row>
+                                            <v-row>
+                                                <v-col cols="10">
+                                                    <p class="text-left">Использовать кэширование при интегрировании
+                                                    </p>
+                                                </v-col>
+                                                <v-col cols="2">
+                                                    <v-checkbox v-model="isIntegrateCached"
+                                                                class="pa-0 ma-0">
+                                                    </v-checkbox>
+                                                </v-col>
+                                            </v-row>
+                                        </v-card-text>
+                                        <v-divider></v-divider>
+                                        <v-card-actions>
+                                            <v-spacer></v-spacer>
+                                            <v-btn
+                                                    color="primary"
+                                                    text
+                                                    @click="saveExtraSettings()"
                                             >
-                                            </v-text-field>
-                                        </v-col>
-                                    </v-row>
-                                    <v-row>
-                                        <v-col cols="10">
-                                            <p class="text-left">Использовать кэширование при интегрировании
-                                            </p>
-                                        </v-col>
-                                        <v-col cols="2">
-                                            <v-checkbox v-model="isIntegrateCached"
-                                                        class="pa-0 ma-0">
-                                            </v-checkbox>
-                                        </v-col>
-                                    </v-row>
-                                </v-card-text>
-                                <v-divider></v-divider>
-                                <v-card-actions>
-                                    <v-spacer></v-spacer>
-                                    <v-btn
-                                            color="primary"
-                                            text
-                                            @click="saveExtraSettings()"
-                                    >
-                                        Сохранить
-                                    </v-btn>
-                                    <v-btn
-                                            color="secondary"
-                                            text
-                                            @click="extraSettings = false"
-                                    >
-                                        Закрыть
-                                    </v-btn>
-                                </v-card-actions>
-                            </v-card>
-                        </v-dialog>
-                        <v-btn
-                                style="border-radius: 0 5px 5px 0"
-                                class="modeling-dark pa-5"
-                                v-bind:width=20
-                                v-bind:height=manageButtonHeight
-                                @click="isMenuHided = !isMenuHided"
-                        >
-                            <v-icon v-if="isMenuHided">keyboard_arrow_down</v-icon>
-                            <v-icon v-else>keyboard_arrow_up</v-icon>
-                        </v-btn>
-                    </v-col>
-                </v-row>
-            </v-parallax>
-        </v-card>
-        <v-container fluid class="py-0">
-            <v-row>
-                <v-btn v-for="i in showElementLabel.length" :key="i"
-                       v-bind:height=showButtonHeight
-                       block tile
-                       @click="showElementIndex = i"
-                       :class="showElementIndex === i? 'chosen-btn' : 'modeling-dark'"
-                >
-                    <v-icon left>{{showElementIcon[i-1]}}
-                    </v-icon>
-                    {{showElementLabel[i-1]}}
-                </v-btn>
-            </v-row>
-        </v-container>
-        <v-card v-if="showElementIndex === 2">
-            <ModelingChart :data="json" :status="status" class="ma-0 pb-10"></ModelingChart>
-        </v-card>
-        <v-card v-if="showElementIndex === 3">
-            <v-card-title>В каком формате вы хотите выгрузить данные?</v-card-title>
-            <v-card-text>
-                <v-row>
-                    <v-col cols="3"></v-col>
-                    <v-col cols="3">
-                        <v-combobox label="Форматы" outlined multiple :items="dataTypes"></v-combobox>
-                    </v-col>
-                    <v-col cols="3">
-                        <v-btn class="modeling-dark" height="57" dark>Выгрузить</v-btn>
-                    </v-col>
-                    <v-col cols="3"></v-col>
-                </v-row>
-            </v-card-text>
-        </v-card>
-        <v-card tile
-                v-if="showElementIndex === 4"
-        >
-            <Log :running="running"></Log>
-        </v-card>
-        <v-tabs tile
-                v-if="showElementIndex === 1"
-                class="elevation-1"
-        >
-            <v-tab>Геометрические параметры
-            </v-tab>
-            <v-tab>Физические параметры
-            </v-tab>
-            <v-tab>Точность расчета
-            </v-tab>
-            <v-tab-item>
-                <v-card class="pa-10">
-                    <v-row>
-                        <v-col cols="4">
-                            <p>Изображение поверхности</p>
-                            <v-img style="border:1px #C2C2C2 solid; border-radius: 5px;"
-                                   :src="shellsUrl[shellIndex-1]"></v-img>
-                        </v-col>
-                        <v-col cols="3">
-                            <p>Тип поверхности</p>
-                            <v-radio-group style="border:1px #C2C2C2 solid; border-radius: 5px;" v-model="shellIndex"
-                                           class="pt-4 px-4">
-                                <v-radio
-                                        v-for="n in shells.length"
-                                        :key="n"
-                                        :label="shells[n-1]"
-                                        :value="n"
-                                ></v-radio>
-                            </v-radio-group>
-                        </v-col>
-                        <v-col cols="2">
-                            <p>Параметры Ляме</p>
-                            <v-text-field outlined label="A" v-model="A[shellIndex-1]" disabled></v-text-field>
-                            <v-text-field outlined label="B" v-model="B[shellIndex-1]" disabled></v-text-field>
-                            <p>Параметры кривизны</p>
-                            <v-text-field outlined label="kx" v-model="kx[shellIndex-1]" disabled></v-text-field>
-                            <v-text-field outlined label="ky" v-model="ky[shellIndex-1]" disabled></v-text-field>
-                        </v-col>
-                        <v-col cols="3">
-                            <p>Значение переменных</p>
-                            <v-text-field outlined label="R1" v-model="R1"
-                                          v-if="kx[shellIndex-1] === '1 / R1' "></v-text-field>
-                            <v-text-field outlined label="R2" v-model="R2"
-                                          v-if="ky[shellIndex-1] === '1 / R2' "></v-text-field>
-                            <v-text-field outlined label="r" v-model="r"
-                                          v-if="ky[shellIndex-1] === '1 / r' || A[shellIndex-1] === 'r'"></v-text-field>
-                            <v-text-field outlined label="Theta" v-model="theta"
-                                          v-if="B[shellIndex-1] === 'x * sin(Theta)'"></v-text-field>
-                            <v-text-field outlined label="d" v-model="d"
-                                          v-if="B[shellIndex-1] === 'd + r * sin(x)'"></v-text-field>
-                        </v-col>
-                    </v-row>
-                </v-card>
-            </v-tab-item>
-            <v-tab-item>
-                <v-card class="pa-10">
-                    <v-row>
-                        <v-col cols="2">
-                            <p>Коэффициенты Пуассона</p>
-                            <v-text-field outlined label="mu12" v-model="mu12"></v-text-field>
-                            <v-text-field outlined label="mu21" v-model="mu21"></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                            <p>Модуль упругости материала</p>
-                            <v-text-field outlined label="E1" v-model="E1"></v-text-field>
-                            <v-text-field outlined label="E2" v-model="E2"></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                            <p>Параметры оболочки</p>
-                            <v-text-field outlined label="h" v-model="h"></v-text-field>
-                            <v-text-field outlined label="z" v-model="z"></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                            <p>Постоянная Больцмана, G</p>
-                            <v-text-field outlined label="k" v-model="k"></v-text-field>
-                            <v-text-field outlined label="G = E/2(1 + mu12)" v-model="G"></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                            <p>Интегрирование по X</p>
-                            <v-text-field outlined label="a0" v-model="a0"></v-text-field>
-                            <v-text-field outlined label="a1" v-model="a1"></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                            <p>Интегрирование по Y</p>
-                            <v-text-field outlined label="b0" v-model="b0"></v-text-field>
-                            <v-text-field outlined label="b1" v-model="b1"></v-text-field>
-                        </v-col>
-                    </v-row>
-                </v-card>
-            </v-tab-item>
-            <v-tab-item>
-                <v-card class="pa-10">
-                    <v-radio-group v-model="method">
-                        <v-radio label="Метод Ньютона"
-                                 :value="1"></v-radio>
-                        <v-radio label="Метод BFGS"
-                                 :value="0" disabled></v-radio>
-                    </v-radio-group>
-                    <v-row>
-                        <v-col cols="2">
-                            <v-text-field outlined
-                                          label="N" v-model="n"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                            <v-text-field outlined
-                                          label="Считать до q" v-model="qMax"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                            <v-text-field outlined
-                                          label="Шаг по q" v-model="qStep"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="2">
-                            <v-text-field outlined
-                                          label="Количество повторений Ньютона" v-model="stepCount"
-                            ></v-text-field>
-                        </v-col>
-                    </v-row>
-                </v-card>
-            </v-tab-item>
-        </v-tabs>
+                                                Сохранить
+                                            </v-btn>
+                                            <v-btn
+                                                    color="secondary"
+                                                    text
+                                                    @click="extraSettings = false"
+                                            >
+                                                Закрыть
+                                            </v-btn>
+                                        </v-card-actions>
+                                    </v-card>
+                                </v-dialog>
+                                <v-btn
+                                        style="border-radius: 0 5px 5px 0"
+                                        class="modeling-dark pa-5"
+                                        v-bind:width=20
+                                        v-bind:height=manageButtonHeight
+                                        @click="isMenuHided = !isMenuHided"
+                                >
+                                    <v-icon v-if="isMenuHided">keyboard_arrow_down</v-icon>
+                                    <v-icon v-else>keyboard_arrow_up</v-icon>
+                                </v-btn>
+                            </v-card-text>
+                        </v-window-item>
+                        <v-window-item>
+                            <v-tabs tile
+                                    v-if="showElementIndex === 1"
+                                    class="elevation-1"
+                            >
+                                <v-tab>Геометрические параметры
+                                </v-tab>
+                                <v-tab>Физические параметры
+                                </v-tab>
+                                <v-tab>Точность расчета
+                                </v-tab>
+                                <v-tab>Ребро
+                                </v-tab>
+                                <v-tab-item
+                                >
+                                    <geometry></geometry>
+                                </v-tab-item>
+                                <v-tab-item>
+                                    <physical></physical>
+                                </v-tab-item>
+                                <v-tab-item>
+                                    <accuracy></accuracy>
+                                </v-tab-item>
+                                <v-tab-item>
+                                    <edge></edge>
+                                </v-tab-item>
+                            </v-tabs>
+                        </v-window-item>
 
-        <v-snackbar
-                v-model="snackbar"
-                :multi-line="true"
-        >
-            {{infoMessage}}
-            <v-progress-circular v-if="errorNetwork" class="ml-5"
-                                 indeterminate
-                                 color="primary"
-            ></v-progress-circular>
-        </v-snackbar>
+                    </v-window>
+
+                </v-card>
+
+            </v-container>
+
+        </v-parallax>
+        <v-container fluid style="background: #fff">
+            <v-card-actions class="justify-space-between"
+            >
+                <v-btn
+                        text
+                        @click="prev"
+                >
+                    <v-icon>mdi-chevron-left</v-icon>
+                </v-btn>
+                <v-item-group
+                        v-model="slide"
+                        class="text-center"
+                        mandatory
+                >
+                    <v-item
+                            v-for="n in length"
+                            :key="`btn-${n}`"
+                            v-slot:default="{ active, toggle }"
+                    >
+                        <v-btn
+                                :input-value="active"
+                                icon
+                                @click="toggle"
+                        >
+                            <v-icon>mdi-record</v-icon>
+                        </v-btn>
+                    </v-item>
+                </v-item-group>
+                <v-btn
+                        text
+                        @click="next"
+                >
+                    <v-icon>mdi-chevron-right</v-icon>
+                </v-btn>
+            </v-card-actions>
+        </v-container>
+        <v-container class="px-10" >
+            <v-container class="py-0">
+                <v-row>
+                    <v-btn v-for="i in showElementLabel.length" :key="i"
+                           v-bind:height=showButtonHeight
+                           block tile
+                           @click="showElementIndex = i"
+                           :class="showElementIndex === i? 'chosen-btn' : 'modeling-dark'"
+                    >
+                        <v-icon left>{{showElementIcon[i-1]}}
+                        </v-icon>
+                        {{showElementLabel[i-1]}}
+                    </v-btn>
+                </v-row>
+            </v-container>
+            <v-card v-if="showElementIndex === 1">
+                <ModelingChart :data="json" :status="status" class="ma-0 pb-10"></ModelingChart>
+            </v-card>
+            <v-card v-if="showElementIndex === 2">
+                <v-card-title>В каком формате вы хотите выгрузить данные?</v-card-title>
+                <v-card-text>
+                    <v-row>
+                        <v-col cols="3"></v-col>
+                        <v-col cols="3">
+                            <v-combobox label="Форматы" outlined multiple :items="dataTypes"></v-combobox>
+                        </v-col>
+                        <v-col cols="3">
+                            <v-btn class="modeling-dark" height="57" dark>Выгрузить</v-btn>
+                        </v-col>
+                        <v-col cols="3"></v-col>
+                    </v-row>
+                </v-card-text>
+            </v-card>
+            <v-card tile
+                    v-if="showElementIndex === 3"
+            >
+                <Log :running="running"></Log>
+            </v-card>
+
+
+            <v-snackbar
+                    v-model="snackbar"
+                    :multi-line="true"
+            >
+                {{infoMessage}}
+                <v-progress-circular v-if="errorNetwork"
+                                     class="ml-5"
+                                     indeterminate
+                                     color="primary"
+                ></v-progress-circular>
+            </v-snackbar>
+        </v-container>
+
     </div>
 </template>
 
@@ -318,12 +268,18 @@
     import Log from "@/components/Log";
     import ModelingChart from "@/components/Chart/ModelingChart";
     import {HTTP} from '@/components/http-common.js';
+    import Accuracy from "@/components/Settings/Accuracy";
+    import Geometry from "@/components/Settings/Geometry";
+    import Physical from "@/components/Settings/Physical";
 
     export default {
         name: "Home",
-        components: {Log, ModelingChart},
+        components: {Physical, Geometry, Accuracy, Log, ModelingChart},
         data() {
             return {
+                length: 4,
+                slide: 1,
+                parallax: "https://i.ibb.co/9rkhMFz/2.jpg",
                 isIntegrateCached: true,
                 availableCores: 1,
                 extraSettings: false,
@@ -336,61 +292,38 @@
                 manageButtonHeight: 64,
                 showButtonHeight: 45,
                 dataTypes: ["JSON", "XLS", "TXT"],
-                showElementLabel: ["Параметры расчета", "График", "Выгрузить данные", "Лог"],
-                showElementIcon: ["settings_applications", "show_chart", "save_alt", "list"],
+                showElementLabel: ["График", "Выгрузить данные", "Лог"],
+                showElementIcon: ["show_chart", "save_alt", "list"],
                 showElementIndex: 1,
-                mu12: 0.3,
-                mu21: 0.3,
-                E1: 210000,
-                E2: 210000,
-                h: 0.09,
-                k: 0.8333333,
-                a0: 0,
-                a1: 5.4,
-                b0: 0,
-                b1: 5.4,
-                qMax: 3.3,
-                qStep: 0.01,
-                stepCount: 1,
-                d: 0,
-                G: 33000,
-                theta: 0,
-                r: 0.05,
-                R1: 20.5,
-                R2: 20.5,
-                shellIndex: 1,
                 panel: [0],
-                n: 1,
                 tableRows: 50,
                 json: [],
                 headers: [],
                 status: "",
                 isOpened: 1,
-                shells: ["Пологая двоякой кривизны", "Цилиндрическая", "Коническая", "Сферическая", "Торообразная"],
-                shellsUrl: ["https://sun9-5.userapi.com/v9GY2NgyB_HztGnlijwk81Jt-wA-olR-t1tgjA/avOT8WgThfs.jpg", "https://sun9-23.userapi.com/luNu0X-j8ewMac3PeE_uQQcCUHXBGCVxu6MZLQ/R7_bGL9trFk.jpg", "https://sun9-51.userapi.com/g3DIuKPekpotrgkqf-bWUtXxBFPATQpMUF0lOg/ivXfJOXz5No.jpg", "https://sun9-16.userapi.com/P1fuz_WSIQThKpjhsikZCaYIbcRNMfKr24PMHQ/Qc4zZV-_5vM.jpg", "https://sun9-46.userapi.com/nGIQwlOFIkAJm9T2xxTgh6O0poobfEtud2CQgw/g0lQnIUL9l0.jpg"],
                 shellsRussianCaseWhich: ["пологой", "цилиндрической", "конической", "сферической", "торообразной"],
-                A: ["1", "1", "1", "r", "r"],
-                B: ["1", "r", "x * sin(Theta)", "r * sin(x)", "d + r * sin(x)"],
-                kx: ["1 / R1", "0", "0", "1 / r", "1 / r"],
-                ky: ["1 / R2", "1 / r", "ctg(Theta) / x", "1 / r", "sin(x) / (d + r * sin(x))"],
                 running: false
             }
         },
         computed: {
+            shellIndex() {
+                return this.$store.state.shellindex;
+            },
             runButtonValue: function () {
                 if (!this.running) {
                     return "Запуск расчета";
                 } else return "Идет расчет"
             },
+
             z: function () {
                 return -this.h / 2;
             },
             /**
              * @return {number}
              */
-/*            G: function () {
-                return this.E1 / 2 / (1 + this.mu12);
-            }*/
+            /*            G: function () {
+                            return this.E1 / 2 / (1 + this.mu12);
+                        }*/
         },
         watch: {
             status: function () {
@@ -412,34 +345,22 @@
             }
         },
         methods: {
+            next() {
+                this.slide = this.slide + 1 === this.length
+                    ? 0
+                    : this.slide + 1
+            },
+            prev() {
+                this.slide = this.slide - 1 < 0
+                    ? this.length - 1
+                    : this.slide - 1
+            },
             run() {
                 this.status = "Запуск";
                 this.getData();
 
-                HTTP.post("start", {
-                    n: this.n,
-                    qstep: this.qStep,
-                    qmax: this.qMax,
-                    stepcount: this.stepCount,
-                    shellindex: this.shellIndex,
-                    d: parseFloat(this.d),
-                    theta: parseFloat(this.theta),
-                    r: parseFloat(this.r),
-                    r1: parseFloat(this.R1),
-                    r2: parseFloat(this.R2),
-                    mu12: parseFloat(this.mu12),
-                    mu21: parseFloat(this.mu21),
-                    E1: parseFloat(this.E1),
-                    E2: parseFloat(this.E2),
-                    h: parseFloat(this.h),
-                    k: parseFloat(this.k),
-                    G: parseFloat(this.G),
-                    z: parseFloat(this.z),
-                    a0: parseFloat(this.a0),
-                    a1: parseFloat(this.a1),
-                    b0: parseFloat(this.b0),
-                    b1: parseFloat(this.b1)
-                }).then(response => {
+                HTTP.post("start",
+                    this.$store.state.inputGeometry.append(this.$store.state.inputGeometry)).then(response => {
                         response.status;
                         this.infoMessage = "Расчет окончен.";
                         this.snackbar = true;
@@ -487,7 +408,7 @@
                     });
                     _self.getRunningStatus();
 
-                }, 500);
+                }, 1500);
             },
             errorReset() {
                 HTTP.post("status-reset").then(() => {
@@ -511,7 +432,7 @@
     }
 
     .dark-transparent {
-        background: rgba(0, 0, 0, 0.6) !important;
+        background: rgba(255, 255, 255, 1) !important;
         color: #fff !important;
     }
 
@@ -541,4 +462,17 @@
         text-align: center
     }
 
+    .physical-card {
+        margin-top: 0.5em;
+        background: linear-gradient(to right, #aaa -20%, #fff 3%, #fff 100%);
+    }
+
+    .physical-card-first {
+        margin-top: 0.5em;
+    }
+
+    .active {
+        border-left: #E5E5E5 1px solid;
+        border-bottom: #E5E5E5 1px solid;
+    }
 </style>

@@ -1,11 +1,11 @@
 <template>
-  <v-app >
+  <v-app style="margin-top: 0px">
     <Nav></Nav>
-    <v-content style="margin-top:-4em">
-      <v-container >
-        <router-view></router-view>
-      </v-container>
-    </v-content>
+      <v-content class="ma-0 pa-0">
+        <v-container fluid class="pa-0 ma-0" style="background: #fff">
+          <router-view></router-view>
+        </v-container>
+      </v-content>
   </v-app>
 </template>
 
