@@ -1,214 +1,136 @@
 <template>
     <div>
         <v-parallax
-                height="460"
+                height="560"
                 :src="parallax"
-                class="pa-0 ma-0"
+                class="pt-0 ma-0"
         >
-            <v-container class="pa-10">
+            <v-container class="px-10">
                 <v-card
-                        :height="isMenuHided?manageButtonHeight:400"
-                        style="transition: height .4s"
-                        class="pa-0 ma-0"
+                        style="transition: height .4s; border-radius: 0 !important;"
+                        class="ma-0 pa-0"
                 >
-                    <v-window
-                            cycle
-                            height="100%"
-                            v-model="slide"
-                            class="pa-0 ma-0"
-
-                    >
-                        <v-window-item>
-
-                            <v-card-title>Моделирование деформирования оболочечных конструкций</v-card-title>
-                            <v-card-text
-                                    class="text-left py-2"
+                    <v-row class="ma-0 pa-0">
+                        <v-col cols="1"
+                               class="pa-0 ma-0"
+                        >
+                            <v-list
+                                    class="pa-0 ma-0"
+                                    height="100%"
+                                    style="border-radius: 0 !important;"
                             >
-                                <v-fade-transition>
-                                    <p v-if="!isMenuHided"
+                                <v-list-item-group v-model="slide"
+                                                   color="secondary"
+                                >
+                                    <v-list-item class="py-7">
+                                        <v-list-item-content>
+                                            <v-list-item-icon class="justify-center">
+                                                <v-icon x-large>info</v-icon>
+                                            </v-list-item-icon>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                    <v-list-item class="py-7">
+                                        <v-list-item-content>
+                                            <v-list-item-icon class="justify-center">
+                                                <v-icon x-large>settings</v-icon>
+                                            </v-list-item-icon>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </v-list-item-group>
+                                <v-list-item-group
+                                        color="secondary"
+                                >
+                                    <v-list-item class="py-7"
+                                                 @click="run()"
+                                                 :disabled="running"
                                     >
-                                        Выполняется расчет напряженно-деформированного состояния
-                                        <span style="text-decoration: underline; cursor: pointer"
-                                              @click="showParameters = true">{{shellsRussianCaseWhich[shellIndex]}}</span>
-                                        оболочки
-                                    </p>
-                                </v-fade-transition>
-                                <v-btn tile
-                                       v-bind:height=manageButtonHeight
-                                       v-bind:width=140
-                                       x-small
-                                       @click="run()"
-                                       :class="errorNetwork || errorCalc || running ? 'modeling-dark-disabled pa-5' : 'modeling-dark pa-5'"
-                                       style="border-radius: 5px 0 0 5px"
-                                >
-                                    {{runButtonValue}}
-                                    <v-progress-circular v-if="running"
-                                                         indeterminate
-                                                         size="25"
-                                                         color="primary"
-                                                         class="pa-0 ml-2"
-                                    ></v-progress-circular>
-                                </v-btn>
-                                <v-btn tile
-                                       :disabled="!errorCalc"
-                                       v-bind:height=manageButtonHeight
-                                       v-bind:width=140
-                                       x-small
-                                       @click="errorReset()"
-                                       class="modeling-dark pa-5"
-                                >
-                                    Сброс ошибки<span v-if="errorCalc">: {{this.status}}</span>
-                                </v-btn>
-                                <v-dialog
-                                        v-model="extraSettings"
-                                        width="320"
-                                >
-                                    <template v-slot:activator="{ on }">
-                                        <v-btn tile
-                                               v-bind:height=manageButtonHeight
-                                               v-bind:width=180
-                                               x-small
-                                               class="modeling-dark pa-5"
-                                               v-on="on"
-                                               @click="loadExtraSettings()"
-                                        >Расширенные настройки
-                                        </v-btn>
-                                    </template>
-                                    <v-card>
-                                        <v-card-title>
-                                            Расширенные настройки
-                                        </v-card-title>
-                                        <v-card-text>
-                                            <v-row>
-                                                <v-col cols="10">
-                                                    <p class="text-left">Используемые ядра процессора
-                                                    </p>
-                                                </v-col>
-                                                <v-col cols="2">
-                                                    <v-text-field
-                                                            class="centered-input pa-0 ma-0"
-                                                            v-model="availableCores"
-                                                    >
-                                                    </v-text-field>
-                                                </v-col>
-                                            </v-row>
-                                            <v-row>
-                                                <v-col cols="10">
-                                                    <p class="text-left">Использовать кэширование при интегрировании
-                                                    </p>
-                                                </v-col>
-                                                <v-col cols="2">
-                                                    <v-checkbox v-model="isIntegrateCached"
-                                                                class="pa-0 ma-0">
-                                                    </v-checkbox>
-                                                </v-col>
-                                            </v-row>
-                                        </v-card-text>
-                                        <v-divider></v-divider>
-                                        <v-card-actions>
-                                            <v-spacer></v-spacer>
-                                            <v-btn
-                                                    color="primary"
-                                                    text
-                                                    @click="saveExtraSettings()"
-                                            >
-                                                Сохранить
-                                            </v-btn>
-                                            <v-btn
-                                                    color="secondary"
-                                                    text
-                                                    @click="extraSettings = false"
-                                            >
-                                                Закрыть
-                                            </v-btn>
-                                        </v-card-actions>
-                                    </v-card>
-                                </v-dialog>
-                                <v-btn
-                                        style="border-radius: 0 5px 5px 0"
-                                        class="modeling-dark pa-5"
-                                        v-bind:width=20
-                                        v-bind:height=manageButtonHeight
-                                        @click="isMenuHided = !isMenuHided"
-                                >
-                                    <v-icon v-if="isMenuHided">keyboard_arrow_down</v-icon>
-                                    <v-icon v-else>keyboard_arrow_up</v-icon>
-                                </v-btn>
-                            </v-card-text>
-                        </v-window-item>
-                        <v-window-item>
-                            <v-tabs tile
-                                    v-if="showElementIndex === 1"
-                                    class="elevation-1"
+                                        <v-list-item-content>
+                                            <v-list-item-icon class="justify-center">
+                                                <v-progress-circular v-if="running"
+                                                                     indeterminate
+                                                                     size="25"
+                                                                     color="primary"
+                                                                     class="pa-0 ml-2"
+                                                ></v-progress-circular>
+                                                <v-icon x-large
+                                                        v-else>play_arrow
+                                                </v-icon>
+                                            </v-list-item-icon>
+                                        </v-list-item-content>
+                                    </v-list-item>
+                                </v-list-item-group>
+                            </v-list>
+                        </v-col>
+                        <v-col cols="11"
+                               class="pa-0 ma-0"
+                        >
+                            <v-window
+                                    v-model="slide"
                             >
-                                <v-tab>Геометрические параметры
-                                </v-tab>
-                                <v-tab>Физические параметры
-                                </v-tab>
-                                <v-tab>Точность расчета
-                                </v-tab>
-                                <v-tab>Ребро
-                                </v-tab>
-                                <v-tab-item
-                                >
-                                    <geometry></geometry>
-                                </v-tab-item>
-                                <v-tab-item>
-                                    <physical></physical>
-                                </v-tab-item>
-                                <v-tab-item>
-                                    <accuracy></accuracy>
-                                </v-tab-item>
-                                <v-tab-item>
-                                    <edge></edge>
-                                </v-tab-item>
-                            </v-tabs>
-                        </v-window-item>
-
-                    </v-window>
-
+                                <v-window-item>
+                                    <v-card-title>Моделирование деформирования оболочечных конструкций</v-card-title>
+                                    <v-card-text
+                                            class="text-left py-2"
+                                    >
+                                        <v-fade-transition>
+                                            <p>Выполняется расчет напряженно-деформированного состояния
+                                                <span style="text-decoration: underline; cursor: pointer"
+                                                      @click="showParameters = true">{{shellsRussianCaseWhich[shellIndex]}}</span>
+                                                оболочки
+                                            </p>
+                                        </v-fade-transition>
+                                        <v-btn tile
+                                               :disabled="!errorCalc"
+                                               v-bind:height=manageButtonHeight
+                                               v-bind:width=140
+                                               x-small
+                                               @click="errorReset()"
+                                               class="modeling-dark pa-5"
+                                        >
+                                            Сброс ошибки<span v-if="errorCalc">: {{this.status}}</span>
+                                        </v-btn>
+                                    </v-card-text>
+                                </v-window-item>
+                                <v-window-item>
+                                    <v-tabs tile
+                                            v-if="showElementIndex === 1"
+                                            class="pa-0 ma-0"
+                                    >
+                                        <v-tab>Геометрические параметры
+                                        </v-tab>
+                                        <v-tab>Физические параметры
+                                        </v-tab>
+                                        <v-tab>Точность расчета
+                                        </v-tab>
+                                        <v-tab>Ребро
+                                        </v-tab>
+                                        <v-tab>Производительность
+                                        </v-tab>
+                                        <v-tab-item>
+                                            <geometry></geometry>
+                                        </v-tab-item>
+                                        <v-tab-item>
+                                            <physical></physical>
+                                        </v-tab-item>
+                                        <v-tab-item>
+                                            <accuracy></accuracy>
+                                        </v-tab-item>
+                                        <v-tab-item>
+                                            <edge></edge>
+                                        </v-tab-item>
+                                        <v-tab-item>
+                                            <extra></extra>
+                                        </v-tab-item>
+                                    </v-tabs>
+                                </v-window-item>
+                            </v-window>
+                        </v-col>
+                    </v-row>
                 </v-card>
-
             </v-container>
 
         </v-parallax>
-        <v-container fluid style="background: #fff">
-            <v-card-actions class="justify-space-between"
-            >
-                <v-btn
-                        text
-                        @click="prev"
-                >
-                    <v-icon>mdi-chevron-left</v-icon>
-                </v-btn>
-                <v-item-group
-                        v-model="slide"
-                        class="text-center"
-                        mandatory
-                >
-                    <v-item
-                            v-for="n in length"
-                            :key="`btn-${n}`"
-                            v-slot:default="{ active, toggle }"
-                    >
-                        <v-btn
-                                :input-value="active"
-                                icon
-                                @click="toggle"
-                        >
-                            <v-icon>mdi-record</v-icon>
-                        </v-btn>
-                    </v-item>
-                </v-item-group>
-                <v-btn
-                        text
-                        @click="next"
-                >
-                    <v-icon>mdi-chevron-right</v-icon>
-                </v-btn>
-            </v-card-actions>
-        </v-container>
-        <v-container class="px-10" >
+        <v-container class="px-10 py-0">
             <v-container class="py-0">
                 <v-row>
                     <v-btn v-for="i in showElementLabel.length" :key="i"
@@ -243,11 +165,11 @@
             </v-card>
             <v-card tile
                     v-if="showElementIndex === 3"
+                    disabled
             >
-                <Log :running="running"></Log>
+                Нужна база данных
+                <!--                <Log :running="running"></Log>-->
             </v-card>
-
-
             <v-snackbar
                     v-model="snackbar"
                     :multi-line="true"
@@ -265,16 +187,17 @@
 </template>
 
 <script>
-    import Log from "@/components/Log";
     import ModelingChart from "@/components/Chart/ModelingChart";
     import {HTTP} from '@/components/http-common.js';
     import Accuracy from "@/components/Settings/Accuracy";
     import Geometry from "@/components/Settings/Geometry";
     import Physical from "@/components/Settings/Physical";
+    import Edge from "@/components/Settings/Edge";
+    import Extra from "@/components/Settings/Extra";
 
     export default {
         name: "Home",
-        components: {Physical, Geometry, Accuracy, Log, ModelingChart},
+        components: {Extra, Physical, Edge, Geometry, Accuracy, ModelingChart},
         data() {
             return {
                 length: 4,
@@ -282,8 +205,6 @@
                 parallax: "https://i.ibb.co/9rkhMFz/2.jpg",
                 isIntegrateCached: true,
                 availableCores: 1,
-                extraSettings: false,
-                isMenuHided: false,
                 method: 1,
                 errorCalc: false,
                 errorNetwork: false,
@@ -292,7 +213,7 @@
                 manageButtonHeight: 64,
                 showButtonHeight: 45,
                 dataTypes: ["JSON", "XLS", "TXT"],
-                showElementLabel: ["График", "Выгрузить данные", "Лог"],
+                showElementLabel: ["График", "Выгрузить данные", "Активность"],
                 showElementIcon: ["show_chart", "save_alt", "list"],
                 showElementIndex: 1,
                 panel: [0],
@@ -308,11 +229,6 @@
         computed: {
             shellIndex() {
                 return this.$store.state.shellindex;
-            },
-            runButtonValue: function () {
-                if (!this.running) {
-                    return "Запуск расчета";
-                } else return "Идет расчет"
             },
 
             z: function () {
@@ -345,57 +261,59 @@
             }
         },
         methods: {
-            next() {
-                this.slide = this.slide + 1 === this.length
-                    ? 0
-                    : this.slide + 1
-            },
-            prev() {
-                this.slide = this.slide - 1 < 0
-                    ? this.length - 1
-                    : this.slide - 1
-            },
             run() {
                 this.status = "Запуск";
                 this.getData();
-
-                HTTP.post("start",
-                    this.$store.state.inputGeometry.append(this.$store.state.inputGeometry)).then(response => {
+                const shellIndex = {shellindex: this.$store.state.shellindex};
+                const accuracyData = this.$store.state.accuracyData;
+                const geometryData = this.$store.state.geometryData;
+                const physicalData = this.$store.state.physicalData;
+                const edgeData = this.$store.state.edgeData;
+                const inputData = Object.assign(shellIndex, physicalData, geometryData, accuracyData, edgeData);
+                console.log(inputData);
+                HTTP.post("start", inputData)
+                    .then(response => {
                         response.status;
                         this.infoMessage = "Расчет окончен.";
                         this.snackbar = true;
-                    }
-                ).catch(error => {
-                    this.status = error;
-                });
+                    })
+                    .catch(error => {
+                        this.status = error;
+                    });
             },
             loadExtraSettings() {
-                HTTP.get("settings").then(response => {
-                    this.availableCores = response.data.availableCores;
-                    this.isIntegrateCached = response.data.integrateCached;
-                }).catch(error => {
-                    this.status = error;
-                });
+                HTTP.get("settings")
+                    .then(response => {
+                        this.availableCores = response.data.availableCores;
+                        this.isIntegrateCached = response.data.integrateCached;
+                    })
+                    .catch(error => {
+                        this.status = error;
+                    });
             },
             saveExtraSettings() {
                 HTTP.post("settings", {
                     availableCores: this.availableCores,
                     integrateCached: this.isIntegrateCached
-                }).then(() => {
-                    this.extraSettings = false;
-                }).catch(error => {
-                    this.status = error;
-                });
+                })
+                    .then(() => {
+                        this.extraSettings = false;
+                    })
+                    .catch(error => {
+                        this.status = error;
+                    });
             },
             getRunningStatus() {
-                HTTP.get("running-status").then(response => {
-                    this.running = response.data;
-                    if (!this.running) {
-                        clearInterval(this.interval);
-                    }
-                }).catch(error => {
-                    this.status = error;
-                });
+                HTTP.get("running-status")
+                    .then(response => {
+                        this.running = response.data;
+                        if (!this.running) {
+                            clearInterval(this.interval);
+                        }
+                    })
+                    .catch(error => {
+                        this.status = error;
+                    });
             },
             getData() {
                 var _self = this;
@@ -403,21 +321,23 @@
                     HTTP.get("output")
                         .then(response => {
                             _self.json = response.data;
-                        }).catch(error => {
-                        _self.status = error;
-                    });
+                        })
+                        .catch(error => {
+                            _self.status = error;
+                        });
                     _self.getRunningStatus();
 
                 }, 1500);
             },
             errorReset() {
-                HTTP.post("status-reset").then(() => {
+                HTTP.post("status-reset")
+                    .then(() => {
                         this.errorCalc = false;
                         this.snackbar = false;
-                    }
-                ).catch(error => {
-                    this.status = error;
-                });
+                    })
+                    .catch(error => {
+                        this.status = error;
+                    });
             }
         },
         created() {

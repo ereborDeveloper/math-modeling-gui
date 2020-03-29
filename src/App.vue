@@ -1,7 +1,6 @@
 <template>
   <v-app style="margin-top: 0px">
-    <Nav></Nav>
-      <v-content class="ma-0 pa-0">
+      <v-content>
         <v-container fluid class="pa-0 ma-0" style="background: #fff">
           <router-view></router-view>
         </v-container>
@@ -12,7 +11,6 @@
 <script>
   export default {
     components: {
-      Nav: () => import('@/components/Nav')
     }
   }
 </script>

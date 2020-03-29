@@ -32,36 +32,32 @@
                 </v-row>
             </v-col>
             <v-col cols="9">
-                <v-card  v-bind:width="chartScale">
-                    <line-chart ref="chart" :chart-data="deflection"
-                                :options="{responsive: true, maintainAspectRatio: true, pointDotRadius: 1, pointDotStrokeWidth: 1, pointHitDetectionRadius: 1,
-                    scales: {
-                        xAxes: [{
-                            ticks: {
-                                maxTicksLimit:10,
-                                beginAtZero: true,
-                                max: 4,
-                                min: 0
-                            },
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'q'
-                            }
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                autoSkip: false,
-                                beginAtZero: true,
-
-                            },
-                            scaleLabel: {
-                                display: true,
-                                labelString: 'W'
-                            }
-                        }]
-
-                }}"
-                    ></line-chart>
+                <v-card v-bind:width="chartScale">
+                    <scatter-chart ref="chart"
+                                   :chart-data="deflection"
+                                   :options="{
+                                        scales: {
+                                            xAxes: [{
+                                                ticks: {
+                                                    maxTicksLimit:10,
+                                                    beginAtZero: true,
+                                                },
+                                                scaleLabel: {
+                                                    display: true,
+                                                    labelString: 'W'
+                                                }
+                                            }],
+                                            yAxes: [{
+                                                ticks: {
+                                                    beginAtZero: true,
+                                                },
+                                                scaleLabel: {
+                                                    display: true,
+                                                    labelString: 'q'
+                                                }
+                                            }]
+                                    }}"
+                    ></scatter-chart>
                 </v-card>
             </v-col>
         </v-row>
@@ -69,13 +65,14 @@
 </template>
 
 <script>
-    import LineChart from './LineChart.js'
+    import ScatterChart from './ScatterChart.js'
+
     import {saveAs} from 'file-saver'
 
     export default {
         props: ["data"],
         components: {
-            LineChart
+            ScatterChart
         },
         data() {
             return {
@@ -86,7 +83,8 @@
                 chartScale: 900,
                 deflection: {},
                 json: [],
-
+                dt0: [],
+                dt1: [],
             }
         },
         computed: {
@@ -107,10 +105,9 @@
         },
         methods: {
             fillData() {
-                var json = [];
-                var lbl = [];
-                var dt0 = [];
-                var dt1 = [];
+                let json = [];
+                this.dt0 = [];
+                this.dt1 = [];
                 for (var k in this.chartData) {
                     let w0 = this.chartData[k][0];
                     let w1 = this.chartData[k][1];
@@ -132,27 +129,24 @@
                 json.sort(function (a, b) {
                     return a.q - b.q;
                 });
-                for (var obj in json) {
-                    const q = Number(json[obj].q);
+                for (let obj in json) {
+                    const q = Number(json[obj].q).toFixed(2);
                     if (q >= this.minQ && q <= this.maxQ) {
-                        lbl.push(q.toFixed(2));
-                        dt0.push(json[obj].W[0]);
-                        dt1.push(json[obj].W[1]);
+                        this.dt0.push({x: json[obj].W[0], y: q});
+                        this.dt1.push({x: json[obj].W[1], y: q});
                     }
                 }
                 this.deflection = {
-                    labels: lbl,
-                    datasets: [{
-                        label: 'W(q) (a/2; b/2)',
-                        borderColor: 'rgb(255, 99, 132)',
-                        data: dt0,
-                        fill: false
-                    },
+                    datasets: [
+                        {
+                            label: 'W(q) (a/2; b/2)',
+                            borderColor: 'rgb(255, 99, 132)',
+                            data: this.dt0,
+                        },
                         {
                             label: 'W(q) (a/4; b/4)',
                             borderColor: 'rgb(99, 255, 132)',
-                            data: dt1,
-                            fill: false
+                            data: this.dt1,
                         }
                     ]
                 };

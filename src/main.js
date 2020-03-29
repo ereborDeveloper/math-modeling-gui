@@ -13,8 +13,6 @@ const VBtn = Vue.component('VBtn');
 VBtn.options.props.ripple.default = false;
 import Home from "@/components/Home";
 
-
-
 const routes = [
   { path: '/home', component: Home }
 ];

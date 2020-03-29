@@ -1,10 +1,45 @@
 <template>
-    
+    <div>
+        <v-row class="pa-0 ma-0">
+            <v-col cols="4"
+                   class="physical-card-first"
+            >
+                <v-row>
+                    <v-col cols="6"
+                           align-self="center"
+                           class="ma-0 pa-0">
+                        <span class="caption text-uppercase">Добавить ребро</span>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-checkbox v-model="inputData.isEdgeEnabled"></v-checkbox>
+                    </v-col>
+                </v-row>
+            </v-col>
+        </v-row>
+    </div>
 </template>
 
 <script>
     export default {
-        name: "Edge"
+        name: "Edge",
+        data() {
+            return {
+                inputData: null
+            }
+        },
+        watch: {
+            inputData: {
+                handler(newValue, oldValue) {
+                    if (oldValue !== null) {
+                        this.$store.commit('updateEdgeData', newValue);
+                    }
+                },
+                deep: true
+            }
+        },
+        created() {
+            this.inputData = this.$store.state.edgeData;
+        }
     }
 </script>
 
