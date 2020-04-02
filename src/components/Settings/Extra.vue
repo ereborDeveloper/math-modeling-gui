@@ -1,17 +1,41 @@
 <template>
-    <v-row>
-        <p class="text-left">Используемые ядра процессора
-        </p>
-        <v-text-field
-                class="centered-input pa-0 ma-0"
-                v-model="availableCores"
-        >
-        </v-text-field>
-        <v-checkbox label="Использовать кэширование при
-                    интегрировании" v-model="isIntegrateCached"
-                    class="pa-0 ma-0">
-        </v-checkbox>
-    </v-row>
+    <div>
+        <v-row class="pa-0 ma-0">
+            <v-col cols="6"
+                   class="physical-card-first"
+                   align-self="center"
+            >
+                <v-row>
+                    <v-col cols="6"
+                           align-self="center"
+                           class="ma-0 pa-0">
+                    <span class="caption text-uppercase">Кэширование при
+                    интегрировании</span>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-checkbox v-model="isIntegrateCached"></v-checkbox>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="6"
+                   class="physical-card"
+            >
+                <v-row>
+                    <v-col cols="6"
+                           align-self="center"
+                           class="ma-0 pa-0">
+                        <span class="caption text-uppercase">Используемые ядра процессора</span>
+                    </v-col>
+                    <v-col cols="2">
+                        <v-text-field label="По оси X"
+                                      v-model="availableCores"
+                        ></v-text-field>
+
+                    </v-col>
+                </v-row>
+            </v-col>
+        </v-row>
+    </div>
 </template>
 
 <script>
@@ -20,7 +44,7 @@
         data() {
             return {
                 isIntegrateCached: true,
-                availableCores: 1
+                availableCores: 6
             }
         }
     }

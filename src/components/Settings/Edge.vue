@@ -3,6 +3,7 @@
         <v-row class="pa-0 ma-0">
             <v-col cols="4"
                    class="physical-card-first"
+                   align-self="center"
             >
                 <v-row>
                     <v-col cols="6"
@@ -12,6 +13,25 @@
                     </v-col>
                     <v-col cols="6">
                         <v-checkbox v-model="inputData.isEdgeEnabled"></v-checkbox>
+                    </v-col>
+                </v-row>
+            </v-col>
+            <v-col cols="4"
+                   class="physical-card"
+            >
+                <v-row>
+                    <v-col cols="6"
+                           align-self="center"
+                           class="ma-0 pa-0">
+                        <span class="caption text-uppercase">Количество ребер</span>
+                    </v-col>
+                    <v-col cols="6">
+                        <v-text-field label="По оси X"
+                                      v-model="inputData.edgeX"
+                                      ></v-text-field>
+                        <v-text-field label="По оси Y"
+                                      v-model="inputData.edgeY"
+                                      ></v-text-field>
                     </v-col>
                 </v-row>
             </v-col>

@@ -28,6 +28,10 @@
                             <v-icon left>save</v-icon>
                             Сохранить в PNG
                         </v-btn>
+                        <v-btn dark @click="saveChart()" height="55">
+                            <v-icon left>save</v-icon>
+                            Сохранить на графике
+                        </v-btn>
                     </v-col>
                 </v-row>
             </v-col>
@@ -35,12 +39,12 @@
                 <v-card v-bind:width="chartScale">
                     <scatter-chart ref="chart"
                                    :chart-data="deflection"
-                                   :options="{
+                                   :options="{responsive: true,
                                         scales: {
                                             xAxes: [{
                                                 ticks: {
-                                                    maxTicksLimit:10,
-                                                    beginAtZero: true,
+                                                    maxTicksLimit:200,
+                                                                                                        minTicksLimit:50,
                                                 },
                                                 scaleLabel: {
                                                     display: true,
@@ -49,11 +53,12 @@
                                             }],
                                             yAxes: [{
                                                 ticks: {
-                                                    beginAtZero: true,
+                                                                                                        maxTicksLimit:200,
+
                                                 },
                                                 scaleLabel: {
                                                     display: true,
-                                                    labelString: 'q'
+                                                    labelString: 'q',
                                                 }
                                             }]
                                     }}"
@@ -82,79 +87,119 @@
                 maxQ: 3.3,
                 chartScale: 900,
                 deflection: {},
+                dt0Color: null,
+                dt1Color: null,
                 json: [],
-                dt0: [],
-                dt1: [],
+                history: []
             }
         },
         computed: {
             chartData: function () {
                 return this.data;
             },
-            chartComputedScale: function () {
-                return this.chartScale;
-            }
+            chartName() {
+                const shellName = this.$store.state.shells[this.$store.state.shellindex];
+                return shellName + "; N: " + this.$store.state.accuracyData.n + "; Ньютон: " + this.$store.state.accuracyData.stepcount + "; Шаг q: " + this.$store.state.accuracyData.qstep;
+            },
+
         },
         watch: {
             data: function () {
                 this.fillData();
             }
         },
+        created() {
+            this.setColor();
+        },
         mounted() {
-            this.fillData()
+            this.fillData();
         },
         methods: {
+            setColor() {
+                this.dt0Color = this.randomColor();
+                this.dt1Color = this.randomColor();
+            },
+            randomColor() {
+                const r = (Math.random() * 255).toFixed(0);
+                const b = (Math.random() * 255).toFixed(0);
+                const g = (Math.random() * 255).toFixed(0);
+                return 'rgb(' + r + ', ' + g + ', ' + b + ')';
+            },
             fillData() {
-                let json = [];
-                this.dt0 = [];
-                this.dt1 = [];
-                for (var k in this.chartData) {
-                    let w0 = this.chartData[k][0];
-                    let w1 = this.chartData[k][1];
-                    if (w0 > this.maxW) {
-                        w0 = this.maxW;
-                    }
-                    if (w0 < this.minW) {
-                        w0 = this.minW;
-                    }
-                    if (w1 > this.maxW) {
-                        w1 = this.maxW;
-                    }
-                    if (w1 < this.minW) {
-                        w1 = this.minW;
-                    }
-                    var ob = {q: k, W: [w0, w1]};
-                    json.push(ob)
+                const sets = [];
+                let charts = [];
+                for (let z in this.history) {
+                    charts.push(this.history[z]);
                 }
-                json.sort(function (a, b) {
-                    return a.q - b.q;
-                });
-                for (let obj in json) {
-                    const q = Number(json[obj].q).toFixed(2);
-                    if (q >= this.minQ && q <= this.maxQ) {
-                        this.dt0.push({x: json[obj].W[0], y: q});
-                        this.dt1.push({x: json[obj].W[1], y: q});
+                charts.push({chartName: this.chartName, data: this.chartData});
+                for (let i in charts) {
+                    const chart = charts[i];
+                    const data = chart.data;
+                    let ouputEntry = [];
+                    for (let k in data) {
+                        let w0 = data[k][0];
+                        let w1 = data[k][1];
+                        if (w0 > this.maxW) {
+                            w0 = this.maxW;
+                        }
+                        if (w0 < this.minW) {
+                            w0 = this.minW;
+                        }
+                        if (w1 > this.maxW) {
+                            w1 = this.maxW;
+                        }
+                        if (w1 < this.minW) {
+                            w1 = this.minW;
+                        }
+                        var ob = {q: k, W: [w0, w1]};
+                        ouputEntry.push(ob)
                     }
-                }
-                this.deflection = {
-                    datasets: [
-                        {
-                            label: 'W(q) (a/2; b/2)',
-                            borderColor: 'rgb(255, 99, 132)',
-                            data: this.dt0,
+                    ouputEntry.sort(function (a, b) {
+                        return a.q - b.q;
+                    });
+                    const dt0 = [];
+                    const dt1 = [];
+                    for (let obj in ouputEntry) {
+                        const q = Number(ouputEntry[obj].q).toFixed(6);
+                        if (q >= this.minQ && q <= this.maxQ) {
+                            dt0.push({x: ouputEntry[obj].W[0], y: q});
+                            dt1.push({x: ouputEntry[obj].W[1], y: q});
+                        }
+                    }
+                    sets.push({
+                            label: chart.chartName + ': W(q) (a/2; b/2)',
+                            borderColor: typeof chart.chartColor0 === "undefined" ? this.dt0Color : chart.chartColor0,
+                            data: dt0,
+                            pointRadius: 3
                         },
                         {
-                            label: 'W(q) (a/4; b/4)',
-                            borderColor: 'rgb(99, 255, 132)',
-                            data: this.dt1,
-                        }
-                    ]
+                            label: chart.chartName + ': W(q) (a/4; b/4)',
+                            borderColor: typeof chart.chartColor1 === "undefined" ? this.dt1Color : chart.chartColor1,
+                            data: dt1,
+                            pointRadius: 3
+                        });
+                }
+
+                console.log(sets);
+                this.deflection = {
+                    datasets: sets
                 };
+
             },
             savePNG() {
                 this.$refs.chart.$refs.canvas.toBlob(function (blob) {
                     saveAs(blob, "chart.png");
                 });
+            },
+            saveChart() {
+                console.log(this.chartName);
+                this.history.push({
+                    chartName: this.chartName,
+                    chartColor0: this.dt0Color,
+                    chartColor1: this.dt1Color,
+                    data: this.chartData
+                });
+                this.setColor();
             }
         }
     }

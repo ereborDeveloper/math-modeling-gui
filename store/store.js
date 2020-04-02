@@ -8,7 +8,9 @@ export default new Vuex.Store({
         shells: ["Пологая", "Цилиндрическая", "Коническая", "Сферическая", "Торообразная"],
         shellindex: 0,
         edgeData: {
-            isEdgeEnabled: true
+            isEdgeEnabled: true,
+            edgeX: 1,
+            edgeY: 1
         },
         accuracyData: {
             n: 1,
