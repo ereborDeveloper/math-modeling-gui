@@ -12,9 +12,12 @@ Vue.config.productionTip = true;
 const VBtn = Vue.component('VBtn');
 VBtn.options.props.ripple.default = false;
 import Home from "@/components/Home";
+import Ecology from "@/ecology/Ecology";
 
 const routes = [
-  { path: '/home', component: Home }
+  { path: '/home', component: Home },
+  { path: '/ecology', component: Ecology }
+
 ];
 
 const router = new VueRouter({
