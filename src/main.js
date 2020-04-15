@@ -5,14 +5,15 @@ import 'vuetify/dist/vuetify.min.css';
 import VueRouter from 'vue-router'
 import store from "../store/store";
 
+import Home from "@/components/Home";
+import Ecology from "@/ecology/Ecology";
+
 Vue.use(VueRouter);
 Vue.use(Vuetify);
 const opts = {};
 Vue.config.productionTip = true;
 const VBtn = Vue.component('VBtn');
 VBtn.options.props.ripple.default = false;
-import Home from "@/components/Home";
-import Ecology from "@/ecology/Ecology";
 
 const routes = [
   { path: '/home', component: Home },

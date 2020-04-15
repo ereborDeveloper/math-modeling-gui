@@ -12,7 +12,7 @@
                         <span class="caption text-uppercase">Добавить ребро</span>
                     </v-col>
                     <v-col cols="6">
-                        <v-checkbox v-model="inputData.isEdgeEnabled"></v-checkbox>
+                        <v-checkbox v-model="inputData.isedgeenabled"></v-checkbox>
                     </v-col>
                 </v-row>
             </v-col>
@@ -27,10 +27,10 @@
                     </v-col>
                     <v-col cols="6">
                         <v-text-field label="По оси X"
-                                      v-model="inputData.edgeX"
+                                      v-model="inputData.edgex"
                                       ></v-text-field>
                         <v-text-field label="По оси Y"
-                                      v-model="inputData.edgeY"
+                                      v-model="inputData.edgey"
                                       ></v-text-field>
                     </v-col>
                 </v-row>

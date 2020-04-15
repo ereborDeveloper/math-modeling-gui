@@ -8,14 +8,14 @@ export default new Vuex.Store({
         shells: ["Пологая", "Цилиндрическая", "Коническая", "Сферическая", "Торообразная"],
         shellindex: 0,
         edgeData: {
-            isEdgeEnabled: true,
-            edgeX: 1,
-            edgeY: 1
+            isedgeenabled: true,
+            edgex: 1,
+            edgey: 1
         },
         accuracyData: {
             n: 1,
             qstep: 0.01,
-            qmax: 3.3,
+            qmax: 5.3,
             stepcount: 10,
             eps: 0.00000001,
             optimizationbreak: 10
@@ -24,8 +24,8 @@ export default new Vuex.Store({
             d: 0,
             theta: 0,
             r: 0.05,
-            r1: 20.5,
-            r2: 20.5,
+            r1: 20.25,
+            r2: 20.25,
         },
         physicalData: {
             mu12: 0.3,

@@ -44,7 +44,7 @@
                                             xAxes: [{
                                                 ticks: {
                                                     maxTicksLimit:200,
-                                                                                                        minTicksLimit:50,
+                                                    minTicksLimit:50,
                                                 },
                                                 scaleLabel: {
                                                     display: true,
@@ -53,8 +53,7 @@
                                             }],
                                             yAxes: [{
                                                 ticks: {
-                                                                                                        maxTicksLimit:200,
-
+                                                    maxTicksLimit:200,
                                                 },
                                                 scaleLabel: {
                                                     display: true,
@@ -82,9 +81,9 @@
         data() {
             return {
                 minW: 0,
-                maxW: 0.3,
+                maxW: 0.5,
                 minQ: 0,
-                maxQ: 3.3,
+                maxQ: 5,
                 chartScale: 900,
                 deflection: {},
                 dt0Color: null,
@@ -99,7 +98,11 @@
             },
             chartName() {
                 const shellName = this.$store.state.shells[this.$store.state.shellindex];
-                return shellName + "; N: " + this.$store.state.accuracyData.n + "; Ньютон: " + this.$store.state.accuracyData.stepcount + "; Шаг q: " + this.$store.state.accuracyData.qstep;
+                let edge = "";
+                if(this.$store.state.edgeData.isedgeenabled) {
+                    edge = "; Ребра: по X - " + this.$store.state.edgeData.edgex + ", по Y - " + this.$store.state.edgeData.edgey;
+                }
+                return shellName + "; N: " + this.$store.state.accuracyData.n + "; Ньютон: " + this.$store.state.accuracyData.stepcount + "; Шаг q: " + this.$store.state.accuracyData.qstep + edge;
             },
 
         },
@@ -170,13 +173,13 @@
                             label: chart.chartName + ': W(q) (a/2; b/2)',
                             borderColor: typeof chart.chartColor0 === "undefined" ? this.dt0Color : chart.chartColor0,
                             data: dt0,
-                            pointRadius: 3
+                            pointRadius: 2
                         },
                         {
                             label: chart.chartName + ': W(q) (a/4; b/4)',
                             borderColor: typeof chart.chartColor1 === "undefined" ? this.dt1Color : chart.chartColor1,
                             data: dt1,
-                            pointRadius: 3
+                            pointRadius: 2
                         });
                 }
 
