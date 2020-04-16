@@ -1,5 +1,5 @@
 # JPV-math (frontend)
-This is frontend of JPV-math application. It provide GUI for <a href="https://github.com/ereborDeveloper">backend</a> service.
+This is frontend of JPV-math application. It provide GUI for <a href="https://github.com/ereborDeveloper/math-modeling">backend</a> service.
 
 It consists of:
 1. Settings block
