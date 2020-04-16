@@ -17,3 +17,5 @@ To deploy service you need:
 3. Download Node.js
 4. Create npm serve configuration and set Node.js interpreter
 5. Run command npm install
+
+Now you can run your project at localhost:8080.
